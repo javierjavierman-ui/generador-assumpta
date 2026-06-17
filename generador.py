@@ -163,13 +163,17 @@ def guardar_salida(data, avanzar_estado=False):
     html_text = render_html(md)
     md_path = os.path.join(OUTPUT_DIR, base + ".md")
     html_path = os.path.join(OUTPUT_DIR, base + ".html")
+    json_path = os.path.join(OUTPUT_DIR, base + ".json")
     with open(md_path, "w", encoding="utf-8") as f:
         f.write(md)
     with open(html_path, "w", encoding="utf-8") as f:
         f.write(html_text)
+    with open(json_path, "w", encoding="utf-8") as f:
+        json.dump(data, f, ensure_ascii=False, indent=2)
     if avanzar_estado:
         state = cargar_json(STATE_PATH)
         state["last_assumpta_number"] = data["numero_assumpta"]
         state["next_compendio_question"] = data["numero_compendio"] + 1
         guardar_json(STATE_PATH, state)
     return md_path, html_path
+

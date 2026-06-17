@@ -1,0 +1,373 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Assumpta Nº {{ data.numero_assumpta }} - Tríptico para Imprimir</title>
+  <style>
+    @page {
+      size: A4 landscape;
+      margin: 0;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Georgia, "Times New Roman", serif;
+      background: #ffffff;
+      color: #26211b;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .print-button-container {
+      background: #f4ece1;
+      padding: 10px;
+      text-align: center;
+      border-bottom: 1px solid #dcd1c4;
+    }
+    .btn-print-action {
+      background: #6b3d22;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 1rem;
+      font-weight: bold;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .triptico-page {
+      width: 297mm;
+      height: 210mm;
+      box-sizing: border-box;
+      padding: 10mm 12mm;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12mm;
+      page-break-after: always;
+      position: relative;
+      overflow: hidden;
+      background-color: #fdfaf6;
+    }
+    /* Dotted folding lines for preview (only on screen, hidden in print) */
+    .triptico-page::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: calc(33.333% + 4mm);
+      width: 1px;
+      border-left: 1px dashed #e2d7c5;
+      z-index: 10;
+    }
+    .triptico-page::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: calc(66.666% + 8mm);
+      width: 1px;
+      border-left: 1px dashed #e2d7c5;
+      z-index: 10;
+    }
+    .col {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      box-sizing: border-box;
+      overflow: hidden;
+      font-size: 0.76rem;
+      line-height: 1.4;
+    }
+    h2 {
+      font-size: 0.95rem;
+      color: #4b2e1f;
+      border-bottom: 1px solid #d9c9ab;
+      padding-bottom: 4px;
+      margin-top: 0;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      text-align: center;
+    }
+    p {
+      margin: 0 0 8px 0;
+      text-align: justify;
+    }
+    .content-area {
+      flex: 1;
+      overflow: hidden;
+    }
+    .footer {
+      font-size: 0.62rem;
+      color: #8c7b6c;
+      text-align: center;
+      border-top: 1px solid #ece0cb;
+      padding-top: 4px;
+      margin-top: auto;
+    }
+    
+    /* Cover Styling */
+    .portada-col {
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      background: #f7eedf;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid #ebdcb9;
+    }
+    .portada-title {
+      font-size: 2.2rem;
+      font-weight: bold;
+      color: #4b2e1f;
+      margin: 10px 0 2px 0;
+      letter-spacing: 0.1em;
+    }
+    .portada-subtitle {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: #7a5c3a;
+      margin-bottom: 25px;
+    }
+    .portada-details {
+      margin-top: auto;
+      font-size: 0.8rem;
+      color: #3b2c1d;
+    }
+    
+    /* Saints illustration */
+    .santo-item {
+      margin-bottom: 12px;
+      background: #ffffff;
+      border: 1px solid #ebdcb9;
+      border-radius: 6px;
+      padding: 6px;
+    }
+    .santo-header {
+      font-weight: bold;
+      color: #4b2e1f;
+      margin-bottom: 4px;
+      font-size: 0.72rem;
+    }
+    .santo-img {
+      width: 100%;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 4px;
+      border: 1px solid #ece0cb;
+      margin-top: 4px;
+    }
+
+    /* Fixed info list */
+    .info-list {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+    .info-list li {
+      margin-bottom: 6px;
+      padding-bottom: 6px;
+      border-bottom: 1px dashed #e2d7c5;
+    }
+    .info-list li:last-child {
+      border-bottom: none;
+    }
+
+    /* Hide UI in print */
+    @media print {
+      .print-button-container {
+        display: none;
+      }
+      .triptico-page::before, .triptico-page::after {
+        display: none;
+      }
+      .triptico-page {
+        background-color: #ffffff;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="print-button-container">
+    <button class="btn-print-action" onclick="window.print()">🖨️ Imprimir / Guardar como PDF</button>
+    <p style="margin: 5px 0 0 0; font-size: 0.8rem; text-align: center; color: #6b3d22;">
+      Consejo: En las opciones de impresión, activa la <strong>Impresión a doble cara</strong> y <strong>Opciones de fondo / Gráficos de fondo</strong> para el mejor resultado.
+    </p>
+  </div>
+
+  <!-- PAGINA 1: EXTERIOR (Izquierda: Contraportada | Centro: Info Fija | Derecha: Portada) -->
+  <div class="triptico-page">
+    
+    <!-- Columna 1: Contraportada (Nuestro Servicio Informativo) -->
+    <div class="col">
+      <h2>Servicio Informativo</h2>
+      <div class="content-area">
+        <p>Entradas destacadas de nuestra web:</p>
+        <ul style="padding-left: 15px; margin: 0;">
+          {% for item in data.servicio %}
+            <li style="margin-bottom: 8px;">
+              <strong>{{ item.titulo }}</strong><br>
+              <span style="font-size: 0.65rem; color: #7a5c3a;">parroquiatorrelodones.com</span>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div class="footer">
+        PARROQUIA ASUNCIÓN DE NUESTRA SEÑORA · TORRELODONES
+      </div>
+    </div>
+
+    <!-- Columna 2: Central (Datos Fijos y Avisos) -->
+    <div class="col">
+      <h2>Información Parroquial</h2>
+      <div class="content-area">
+        <ul class="info-list">
+          <li>
+            <strong>Apertura de la Iglesia:</strong><br>
+            De 8:30 a 14:00 y de 17:00 a 21:00.
+          </li>
+          <li>
+            <strong>Horario de Misas:</strong><br>
+            Lunes a sábado: 9:00 y 20:00.<br>
+            Domingos y festivos: 10:00, 11:00, 12:00, 13:00, 19:00 y 20:00.
+          </li>
+          <li>
+            <strong>Confesiones:</strong><br>
+            Lunes y miércoles: 19:00 a 20:00.<br>
+            Resto de días: Media hora antes de cada Misa.
+          </li>
+          <li>
+            <strong>Mane nobiscum, Domine:</strong><br>
+            <em style="color: #6b3d22;">{{ data.mane }}</em>
+          </li>
+        </ul>
+      </div>
+      <div class="footer">
+        Assumpta Nº {{ data.numero_assumpta }}
+      </div>
+    </div>
+
+    <!-- Columna 3: Portada (Cover) -->
+    <div class="col portada-col">
+      <div class="portada-title">ASSUMPTA</div>
+      <div class="portada-subtitle">Hoja Parroquial Informativa</div>
+      
+      <div class="content-area" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+        <span style="font-size: 3rem; color: #6b3d22; line-height: 1;">⛪</span>
+        <div style="font-size: 0.95rem; font-weight: bold; margin-top: 15px; color: #4b2e1f;">
+          Asunción de Nuestra Señora
+        </div>
+        <div style="font-size: 0.75rem; color: #7a5c3a; letter-spacing: 0.05em; margin-top: 5px;">
+          Torrelodones (Madrid)
+        </div>
+      </div>
+
+      <div class="portada-details">
+        <strong>Nº {{ data.numero_assumpta }}</strong><br>
+        <span style="font-size: 0.7rem; text-transform: uppercase;">{{ data.fecha_larga }}</span>
+      </div>
+    </div>
+
+  </div>
+
+
+  <!-- PAGINA 2: INTERIOR (Izquierda: Carta del Párroco | Centro: Liturgia | Derecha: Compendio y Papa) -->
+  <div class="triptico-page">
+    
+    <!-- Columna 1: Carta del Párroco -->
+    <div class="col">
+      <h2>Carta del Párroco</h2>
+      <div class="content-area" style="font-style: italic;">
+        {% for para in data.carta.split('\n\n') %}
+          {% if para.strip() %}
+            <p>{{ para }}</p>
+          {% endif %}
+        {% endfor %}
+      </div>
+      <div class="footer">
+        Queremos escucharte: párroco online
+      </div>
+    </div>
+
+    <!-- Columna 2: Liturgia Dominical -->
+    <div class="col">
+      <h2>Liturgia Dominical</h2>
+      <div class="content-area">
+        <div style="font-weight: bold; color: #6b3d22; font-size: 0.8rem; margin-bottom: 6px; text-align: center;">
+          {{ data.liturgia.celebracion }}
+        </div>
+        
+        <p><strong>Lecturas:</strong> {{ data.liturgia.lecturas }}</p>
+        <p><strong>Salmo:</strong> {{ data.liturgia.salmo }}</p>
+        <p><strong>Evangelio:</strong> {{ data.liturgia.evangelio }}</p>
+        
+        <div style="border-top: 1px dashed #d9c9ab; margin-top: 8px; padding-top: 8px; font-size: 0.72rem;">
+          <strong>Reflexión del Evangelio:</strong>
+          <p style="margin-top: 4px;">{{ data.liturgia.evangelio_texto if data.liturgia.evangelio_texto else 'Contenido del Evangelio proclamado.' }}</p>
+        </div>
+      </div>
+      <div class="footer">
+        Lecturas oficiales de la Conferencia Episcopal
+      </div>
+    </div>
+
+    <!-- Columna 3: Santos Destacados e Iglesia -->
+    <div class="col">
+      <h2>Santos y Compendio</h2>
+      <div class="content-area">
+        <!-- Santos seleccionados con imágenes -->
+        {% if data.santos_seleccionados %}
+          <div style="margin-bottom: 10px;">
+            <strong>Santos de la semana:</strong>
+            <div style="display: flex; gap: 8px; margin-top: 4px;">
+              {% for santo in data.santos_seleccionados %}
+                <div class="santo-item" style="flex: 1; text-align: center; margin-bottom: 0;">
+                  <div class="santo-header" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                    {{ santo.nombre.split(',')[0] }}
+                  </div>
+                  {% if santo.imagen %}
+                    <img class="santo-img" src="/{{ santo.imagen }}" alt="{{ santo.nombre }}">
+                  {% else %}
+                    <div style="height: 100px; background: #efe5d5; display: flex; align-items: center; justify-content: center; border-radius: 4px; font-size: 0.6rem; color: #7a5c3a;">
+                      [Sin Imagen]
+                    </div>
+                  {% endif %}
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
+
+        <!-- Compendio del Catecismo -->
+        <div style="border-top: 1px dashed #d9c9ab; padding-top: 6px; margin-top: 6px;">
+          <strong>Catecismo Compendio:</strong>
+          <div style="margin-top: 4px; font-size: 0.7rem;">
+            {{ data.compendio }}
+          </div>
+        </div>
+
+        <!-- Habla el Papa -->
+        <div style="border-top: 1px dashed #d9c9ab; padding-top: 6px; margin-top: 6px;">
+          <strong>Habla el Papa:</strong>
+          <div style="margin-top: 4px; font-size: 0.7rem; font-style: italic;">
+            "{{ data.papa.extracto }}"
+          </div>
+        </div>
+      </div>
+      <div class="footer">
+        Fe y Magisterio de la Iglesia
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Automatically trigger printing after a brief delay to allow layout to settle
+    window.addEventListener('load', function() {
+      setTimeout(function() {
+        window.print();
+      }, 500);
+    });
+  </script>
+</body>
+</html>

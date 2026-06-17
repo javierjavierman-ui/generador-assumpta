@@ -15,7 +15,8 @@
       <div class="success">
         Generado correctamente:<br>
         Markdown: <code>{{ generated.md }}</code><br>
-        HTML: <code>{{ generated.html }}</code>
+        HTML: <code>{{ generated.html }}</code><br><br>
+        <a href="/triptico/{{ generated.numero }}/{{ generated.fecha }}" target="_blank" class="btn-print" style="display: inline-block; background: #6b3d22; color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px; font-weight: bold; text-align: center;">🖨️ Abrir Tríptico para Imprimir (PDF)</a>
       </div>
     {% endif %}
 
@@ -74,8 +75,17 @@
             </div>
             {% endif %}
           </div>
-          <h3>Santoral</h3>
-          <pre>{{ data.santoral }}</pre>
+          <h3>Santoral (Elige hasta 2 santos para incluir e ilustrar con IA)</h3>
+          <div style="background: #efe5d5; padding: 12px; border-radius: 8px; margin-bottom: 15px;">
+            {% for item in data.santoral %}
+              <div style="margin: 8px 0; display: flex; align-items: center; gap: 8px;">
+                <input type="checkbox" id="santo_{{ loop.index }}" name="santos_seleccionados" value="{{ item.santo }}" style="width: auto;">
+                <label for="santo_{{ loop.index }}" style="margin: 0; font-weight: normal; cursor: pointer;">
+                  <strong>{{ item.fecha }}:</strong> {{ item.santo }}
+                </label>
+              </div>
+            {% endfor %}
+          </div>
           <h3>Habla el Papa</h3>
           <pre>{{ data.papa }}</pre>
           <h3>Servicio Informativo</h3>

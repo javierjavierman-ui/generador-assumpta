@@ -81,3 +81,66 @@ def generar_texto_ia(config, prompt, fallback):
     if provider in ("minimax", "minimax_free"):
         return generar_texto_minimax(config, prompt, fallback)
     return fallback
+
+
+def slugify(text):
+    import re
+    text = text.lower()
+    text = re.sub(r'[áàäâ]', 'a', text)
+    text = re.sub(r'[éèëê]', 'e', text)
+    text = re.sub(r'[íìïî]', 'i', text)
+    text = re.sub(r'[óòöô]', 'o', text)
+    text = re.sub(r'[úùüû]', 'u', text)
+    text = re.sub(r'[ñ]', 'n', text)
+    text = re.sub(r'[^a-z0-9_-]', '-', text)
+    return re.sub(r'-+', '-', text).strip('-')
+
+
+def generar_imagen_dalle(santo_nombre):
+    _load_local_env()
+    api_key = os.environ.get("OPENAI_API_KEY", "").strip()
+    if not api_key:
+        return None
+
+    filename_slug = slugify(santo_nombre)
+    static_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "static", "images"))
+    os.makedirs(static_dir, exist_ok=True)
+    target_path = os.path.join(static_dir, f"{filename_slug}.png")
+
+    if os.path.exists(target_path):
+        return f"static/images/{filename_slug}.png"
+
+    prompt = (
+        f"Retrato de {santo_nombre}. Estilo pintura clásica al óleo, "
+        "arte sacro católico medieval y renacentista, iluminación dramática tenebrista, "
+        "rostro sereno y piadoso, fondo neutro oscuro y difuminado, "
+        "estilo realista de museo."
+    )
+
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json",
+    }
+    payload = {
+        "model": "dall-e-2",
+        "prompt": prompt,
+        "n": 1,
+        "size": "256x256"
+    }
+
+    import urllib.request
+    try:
+        response = requests.post("https://api.openai.com/v1/images/generations", headers=headers, json=payload, timeout=30)
+        response.raise_for_status()
+        res_data = response.json()
+        img_url = res_data["data"][0]["url"]
+
+        with urllib.request.urlopen(img_url) as response_img:
+            with open(target_path, "wb") as out_file:
+                out_file.write(response_img.read())
+
+        return f"static/images/{filename_slug}.png"
+    except Exception as e:
+        print(f"Error generando imagen de {santo_nombre}: {e}")
+        return None
+
