@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Generador Assumpta</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <main>
+    <h1>Generador Assumpta</h1>
+
+    {% if error %}<div class="error">{{ error }}</div>{% endif %}
+    {% if generated %}
+      <div class="success">
+        Generado correctamente:<br>
+        Markdown: <code>{{ generated.md }}</code><br>
+        HTML: <code>{{ generated.html }}</code>
+      </div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data">
+      <section>
+        <label>Fecha del domingo</label>
+        <input type="date" name="fecha" value="{{ data.fecha_iso if data else '' }}" required>
+      </section>
+
+      {% if data %}
+        <section class="grid">
+          <div><strong>Nº Assumpta:</strong> {{ data.numero_assumpta }}</div>
+          <div><strong>Nº Compendio:</strong> {{ data.numero_compendio }}</div>
+        </section>
+
+        <section>
+          <h2>Carta del Parroco</h2>
+          <textarea name="carta" rows="10">{{ data.carta }}</textarea>
+        </section>
+
+        <section>
+          <h2>Mane nobiscum, Domine</h2>
+          <textarea name="mane" rows="4">{{ data.mane }}</textarea>
+        </section>
+
+        <section>
+          <h2>Vida Parroquial</h2>
+          <input type="file" name="vida_docx" accept=".docx">
+          <textarea name="vida_parroquial" rows="8" placeholder="O pega aqui el texto de Vida Parroquial">{{ data.vida_parroquial }}</textarea>
+        </section>
+
+        <section>
+          <h2>Vista de fuentes</h2>
+
+          <h3>Liturgia Dominical</h3>
+          <div class="liturgia-card">
+            <div class="liturgia-campo">
+              <span class="liturgia-etiqueta">Celebración</span>
+              <span class="liturgia-valor">{{ data.liturgia.celebracion }}</span>
+            </div>
+            <div class="liturgia-campo">
+              <span class="liturgia-etiqueta">Lecturas</span>
+              <span class="liturgia-valor">{{ data.liturgia.lecturas }}</span>
+            </div>
+            <div class="liturgia-campo">
+              <span class="liturgia-etiqueta">Salmo</span>
+              <span class="liturgia-valor">{{ data.liturgia.salmo }}</span>
+            </div>
+            <div class="liturgia-campo">
+              <span class="liturgia-etiqueta">Evangelio</span>
+              <span class="liturgia-valor">{{ data.liturgia.evangelio }}</span>
+            </div>
+            {% if data.liturgia.fuente %}
+            <div class="liturgia-fuente">
+              Fuente: <a href="{{ data.liturgia.fuente }}" target="_blank" rel="noopener">Universalis.com</a>
+            </div>
+            {% endif %}
+          </div>
+          <h3>Santoral</h3>
+          <pre>{{ data.santoral }}</pre>
+          <h3>Habla el Papa</h3>
+          <pre>{{ data.papa }}</pre>
+          <h3>Servicio Informativo</h3>
+          <pre>{{ data.servicio }}</pre>
+          <h3>Compendio</h3>
+          <pre>{{ data.compendio }}</pre>
+        </section>
+
+        <button type="submit" name="action" value="save">Generar HTML/Markdown y avanzar estado</button>
+      {% else %}
+        <button type="submit" name="action" value="preview">Cargar borrador</button>
+      {% endif %}
+    </form>
+  </main>
+</body>
+</html>
