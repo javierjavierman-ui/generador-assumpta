@@ -45,10 +45,11 @@ def obtener_santoral_semana(fecha_iso, config=None):
     if faltan_dias and config:
         fechas_str = ", ".join([d.strftime("%d/%m") for d in faltan_dias])
         prompt = (
-            f"Dime únicamente los nombres de los santos católicos principales que se celebran en España "
-            f"en estas fechas (DD/MM): {fechas_str}. "
+            f"Dime únicamente los nombres de los santos católicos que se celebran en España "
+            f"en estas fechas (DD/MM): {fechas_str}, consultando específicamente el santoral oficial de la Archidiócesis de Madrid "
+            "(archimadrid.org/index.php/oracion-y-liturgia/santoral). "
             "Devuelve la respuesta estrictamente en formato JSON como un diccionario donde la clave sea la fecha en formato 'DD/MM' "
-            "y el valor sea el nombre del santo (por ejemplo: {\\\"22/06\\\": \\\"Santo Tomás Moro\\\"}). "
+            "y el valor sea el nombre del santo principal (por ejemplo: {\"22/06\": \"Santo Tomás Moro\"}). "
             "No añadas markdown, explicaciones ni ningún otro texto adicional."
         )
         respuesta_ia = generar_texto_ia(config, prompt, fallback="{}")

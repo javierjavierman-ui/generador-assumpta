@@ -353,7 +353,11 @@
     <!-- Columna Centro: DATOS FIJOS -->
     <div class="col datos-fijos">
       <div class="datos-fijos-img">
-        <div style="padding-top: 15mm; color: #777;">[Foto Fachada Parroquia]</div>
+        {% if data.img_fachada_b64 %}
+          <img src="{{ data.img_fachada_b64 }}" style="width:100%; height:100%; object-fit:cover;">
+        {% else %}
+          <div style="padding-top: 15mm; color: #777;">[Foto Fachada Parroquia]</div>
+        {% endif %}
       </div>
       
       <div class="df-bloque">
@@ -390,6 +394,14 @@
         Lunes y miércoles, de 20:30 a 21:30<br>
         Jueves y sábados, de 10:00 a 11:30
       </div>
+      <div class="df-bloque">
+        <div class="df-titulo">CHARLA PREBAUTISMAL</div>
+        Martes 18:30. Jueves 20:30
+      </div>
+      <div class="df-bloque">
+        <div class="df-titulo">EQUIPO PASTORAL</div>
+        D. Miguel Antonio Ruiz Ontañón, Párroco
+      </div>
       <div class="df-bloque" style="background: #f0f0f0; padding: 4px; margin-top: 10px;">
         <strong>PARROQUIA ASUNCIÓN DE NUESTRA SEÑORA</strong><br>
         Camino de Valladolid, 26<br>
@@ -404,7 +416,13 @@
       <div class="portada-container">
         
         <div class="banda-lateral">
-          <div class="logo-circulo">LOGO</div>
+          <div class="logo-circulo">
+            {% if data.img_logo_b64 %}
+              <img src="{{ data.img_logo_b64 }}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">
+            {% else %}
+              LOGO
+            {% endif %}
+          </div>
           <div class="banda-texto">PARROQUIA ASUNCIÓN DE NUESTRA SEÑORA</div>
         </div>
 
@@ -449,7 +467,11 @@
     <!-- Columna Izquierda: LITURGIA -->
     <div class="col">
       <div class="liturgia-img">
-        <div style="padding-top: 18mm; text-align: center; color: #777;">[Imagen Jesús/Evangelio]</div>
+        {% if data.img_evangelio_b64 %}
+          <img src="{{ data.img_evangelio_b64 }}" style="width:100%; height:100%; object-fit:cover;">
+        {% else %}
+          <div style="padding-top: 18mm; text-align: center; color: #777;">[Imagen Jesús/Evangelio]</div>
+        {% endif %}
       </div>
       <h2 style="color: #666;">{{ data.liturgia.celebracion }}</h2>
       
@@ -477,7 +499,11 @@
     <div class="col">
       <div class="vp-img-container">
         <div class="vp-img">
-          <div style="padding-top: 15mm; text-align: center; color: #777;">[Imagen Virgen]</div>
+          {% if data.img_virgen_b64 %}
+            <img src="{{ data.img_virgen_b64 }}" style="width:100%; height:100%; object-fit:cover;">
+          {% else %}
+            <div style="padding-top: 15mm; text-align: center; color: #777;">[Imagen Virgen]</div>
+          {% endif %}
         </div>
         <div class="vp-mane">{{ data.mane }}</div>
       </div>

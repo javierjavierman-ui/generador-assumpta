@@ -33,6 +33,22 @@ def index():
             
             data = cargar_contexto_base(fecha_iso, n_assumpta, n_compendio)
 
+            liturgia = {
+                "celebracion": request.form.get("liturgia_celebracion"),
+                "lecturas": request.form.get("liturgia_lecturas"),
+                "salmo": request.form.get("liturgia_salmo"),
+                "evangelio": request.form.get("liturgia_evangelio"),
+                "evangelio_texto": request.form.get("liturgia_evangelio_texto"),
+            }
+
+            # Generar texto del Evangelio si falta
+            if "evangelio" in liturgia and liturgia["evangelio"] and ("evangelio_texto" not in liturgia or not liturgia["evangelio_texto"]):
+                prompt_ev = f"Devuelve el texto íntegro en español de la siguiente cita bíblica del evangelio: {liturgia['evangelio']}. Usa la traducción oficial de la Conferencia Episcopal Española. Devuelve únicamente el texto bíblico."
+                from fuentes.ia import generar_texto_ia
+                liturgia["evangelio_texto"] = generar_texto_ia(data["config"], prompt_ev)
+
+            data["liturgia"] = liturgia
+
             vida_parroquial = request.form.get("vida_parroquial", "").strip()
             uploaded = request.files.get("vida_docx")
             if uploaded and uploaded.filename:
@@ -76,6 +92,23 @@ def index():
             data["libro_autor"] = libro_autor
             data["libro_texto"] = libro_texto
             data["libro_img_b64"] = libro_img_b64
+
+            def process_img(field_name):
+                file_obj = request.files.get(field_name)
+                if file_obj and file_obj.filename:
+                    img_data = file_obj.read()
+                    return "data:image/png;base64," + base64.b64encode(img_data).decode("utf-8")
+                return request.form.get(f"{field_name}_b64")
+
+            data["img_fachada_b64"] = process_img("img_fachada")
+            data["img_logo_b64"] = process_img("img_logo")
+            data["img_virgen_b64"] = process_img("img_virgen")
+            data["img_evangelio_b64"] = process_img("img_evangelio")
+
+            from fuentes.ia import generar_imagen_dalle
+            if action in ["preview_triptico", "save"] and not data["img_evangelio_b64"] and data["liturgia"].get("evangelio"):
+                prompt_ev = "Escena bíblica realista y clásica de: " + data["liturgia"]["evangelio"]
+                data["img_evangelio_b64"] = generar_imagen_dalle(prompt_ev)
 
             selected_santos = request.form.getlist("santos_seleccionados")
             santos_data = []

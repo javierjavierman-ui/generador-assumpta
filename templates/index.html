@@ -50,7 +50,7 @@
         <section>
           <h2>Vida Parroquial</h2>
           <input type="file" name="vida_docx" accept=".docx">
-          <textarea name="vida_parroquial" rows="8" placeholder="O pega aqui el texto de Vida Parroquial">{{ data.vida_parroquial }}</textarea>
+          <textarea name="vida_parroquial" rows="8" placeholder="O pega aqui el texto de Vida Parroquial">{{ data.vida_parroquial|default('❑ Apertura de la iglesia\n❑ MISAS EN VERANO\n❑ Madres Mónicas\n❑ AVISO PARROQUIAL\n❑ 10 MINUTOS CON JESÚS\n❑ Emisora de radio católica') }}</textarea>
         </section>
 
         <section>
@@ -79,9 +79,37 @@
         </section>
 
         <section>
+          <h2>Imágenes Estáticas y de Portada</h2>
+          <div class="grid">
+            <div>
+              <label>Foto Fachada Parroquia:</label>
+              <input type="file" name="img_fachada" accept="image/*">
+            </div>
+            <div>
+              <label>Logo Portada (Círculo Virgen):</label>
+              <input type="file" name="img_logo" accept="image/*">
+            </div>
+            <div>
+              <label>Virgen (Vida Parroquial):</label>
+              <input type="file" name="img_virgen" accept="image/*">
+            </div>
+            <div>
+              <label>Imagen Evangelio (Subir archivo o dejar vacío para generar con IA):</label>
+              <input type="file" name="img_evangelio" accept="image/*">
+            </div>
+          </div>
+        </section>
+
+        <section>
           <h2>Vista de fuentes</h2>
 
           <h3>Liturgia Dominical</h3>
+          <input type="text" name="liturgia_celebracion" value="{{ data.liturgia.celebracion|default('') }}">
+          <input type="text" name="liturgia_lecturas" value="{{ data.liturgia.lecturas|default('') }}">
+          <input type="text" name="liturgia_salmo" value="{{ data.liturgia.salmo|default('') }}">
+          <input type="text" name="liturgia_evangelio" value="{{ data.liturgia.evangelio|default('') }}">
+          <textarea name="liturgia_evangelio_texto" rows="6" placeholder="Texto íntegro del Evangelio (CEE)">{{ data.liturgia.evangelio_texto|default('') }}</textarea>
+
           <div class="liturgia-card">
             <div class="liturgia-campo">
               <span class="liturgia-etiqueta">Celebración</span>
