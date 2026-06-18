@@ -40,7 +40,7 @@ def cargar_contexto_base(fecha_iso):
         "fecha_iso": fecha_iso,
         "fecha_larga": datetime.strptime(fecha_iso, "%Y-%m-%d").strftime("%d de %m de %Y"),
         "liturgia": obtener_liturgia(fecha_iso),
-        "santoral": obtener_santoral_semana(fecha_iso),
+        "santoral": obtener_santoral_semana(fecha_iso, config),
         "papa": obtener_habla_el_papa(config["vatican_speeches_url"]),
         "servicio": obtener_servicio_informativo(config["parish_feed_url"]),
         "compendio": extraer_pregunta_compendio(config["compendio_pdf"], numero_compendio),
@@ -95,7 +95,23 @@ def generar_mane(config, liturgia):
 
 def render_markdown(data):
     servicio = "\n".join([f"- [{item['titulo']}]({item['url']})" for item in data["servicio"]])
-    santoral = "\n".join([f"- {item['fecha']}: {item['santo']}" for item in data["santoral"]])
+    
+    # Renderizar el santoral y añadir imágenes si existen
+    santoral_lines = []
+    for item in data["santoral"]:
+        santoral_lines.append(f"- {item['fecha']}: {item['santo']}")
+    
+    # Añadir los santos ilustrados seleccionados
+    santos_imgs = []
+    for s in data.get("santos_seleccionados", []):
+        santos_imgs.append(f"### {s['nombre']}")
+        if s.get("imagen"):
+            santos_imgs.append(f"![{s['nombre']}](../{s['imagen']})")
+    
+    santoral_texto = "\n".join(santoral_lines)
+    if santos_imgs:
+        santoral_texto += "\n\n" + "\n\n".join(santos_imgs)
+
     return f"""# ASSUMPTA {data['numero_assumpta']}
 
 **Fecha:** {data['fecha_larga']}
@@ -106,7 +122,7 @@ def render_markdown(data):
 
 ## Santoral
 
-{santoral}
+{santoral_texto}
 
 ## Mane nobiscum, Domine
 

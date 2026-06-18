@@ -262,6 +262,13 @@ def obtener_liturgia(fecha_iso: str) -> dict:
     try:
         # Convertir fecha al formato YYYYMMDD que usa Universalis
         dt = datetime.strptime(fecha_iso, "%Y-%m-%d")
+        
+        # Asegurarnos de que sea domingo (weekday() == 6)
+        if dt.weekday() != 6:
+            dias_hasta_domingo = 6 - dt.weekday()
+            dt = dt + timedelta(days=dias_hasta_domingo)
+            logger.info("Fecha ajustada al domingo: %s", dt)
+            
         fecha_uni = dt.strftime("%Y%m%d")
         url = UNIVERSALIS_URL.format(fecha=fecha_uni)
 
