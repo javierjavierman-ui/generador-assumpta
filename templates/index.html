@@ -13,10 +13,9 @@
     {% if error %}<div class="error">{{ error }}</div>{% endif %}
     {% if generated %}
       <div class="success">
-        Generado correctamente:<br>
-        Markdown: <code>{{ generated.md }}</code><br>
-        HTML: <code>{{ generated.html }}</code><br><br>
-        <a href="/triptico/{{ generated.numero }}/{{ generated.fecha }}" target="_blank" class="btn-print" style="display: inline-block; background: #6b3d22; color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px; font-weight: bold; text-align: center;">🖨️ Abrir Tríptico para Imprimir (PDF)</a>
+        Generado correctamente (listo para descargar):<br><br>
+        <a href="data:text/markdown;charset=utf-8;base64,{{ generated.md }}" download="assumpta-{{ generated.numero }}-{{ generated.fecha }}.md" class="btn-print" style="display: inline-block; background: #333; color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px;">Descargar Markdown</a>
+        <a href="data:text/html;charset=utf-8;base64,{{ generated.html }}" download="assumpta-{{ generated.numero }}-{{ generated.fecha }}.html" class="btn-print" style="display: inline-block; background: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px;">Descargar HTML</a>
       </div>
     {% endif %}
 
@@ -28,8 +27,14 @@
 
       {% if data %}
         <section class="grid">
-          <div><strong>Nº Assumpta:</strong> {{ data.numero_assumpta }}</div>
-          <div><strong>Nº Compendio:</strong> {{ data.numero_compendio }}</div>
+          <div>
+            <label style="display:inline-block; margin-right: 10px;"><strong>Nº Assumpta:</strong></label>
+            <input type="number" name="numero_assumpta" value="{{ data.numero_assumpta }}" style="width: 100px; padding: 4px;">
+          </div>
+          <div>
+            <label style="display:inline-block; margin-right: 10px;"><strong>Nº Compendio:</strong></label>
+            <input type="number" name="numero_compendio" value="{{ data.numero_compendio }}" style="width: 100px; padding: 4px;">
+          </div>
         </section>
 
         <section>
@@ -94,7 +99,10 @@
           <pre>{{ data.compendio }}</pre>
         </section>
 
-        <button type="submit" name="action" value="save">Generar HTML/Markdown y avanzar estado</button>
+        <div style="margin-top: 20px; display: flex; gap: 10px;">
+          <button type="submit" name="action" value="save">Descargar HTML/Markdown y avanzar estado</button>
+          <button type="submit" name="action" value="preview_triptico" formtarget="_blank" style="background-color: #6b3d22;">Vista Previa del Tríptico (PDF)</button>
+        </div>
       {% else %}
         <button type="submit" name="action" value="preview">Cargar borrador</button>
       {% endif %}

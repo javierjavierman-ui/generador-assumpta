@@ -27,11 +27,16 @@ def guardar_json(path, data):
         json.dump(data, f, ensure_ascii=False, indent=2)
 
 
-def cargar_contexto_base(fecha_iso):
+def cargar_contexto_base(fecha_iso, numero_assumpta_manual=None, numero_compendio_manual=None):
     config = cargar_json(CONFIG_PATH)
-    state = cargar_json(STATE_PATH)
-    numero_assumpta = state["last_assumpta_number"] + 1
-    numero_compendio = state["next_compendio_question"]
+    try:
+        state = cargar_json(STATE_PATH)
+    except Exception:
+        state = {"last_assumpta_number": 0, "next_compendio_question": 1}
+        
+    numero_assumpta = numero_assumpta_manual if numero_assumpta_manual is not None else state.get("last_assumpta_number", 0) + 1
+    numero_compendio = numero_compendio_manual if numero_compendio_manual is not None else state.get("next_compendio_question", 1)
+    
     return {
         "config": config,
         "state": state,
@@ -106,7 +111,8 @@ def render_markdown(data):
     for s in data.get("santos_seleccionados", []):
         santos_imgs.append(f"### {s['nombre']}")
         if s.get("imagen"):
-            santos_imgs.append(f"![{s['nombre']}](../{s['imagen']})")
+            # En Vercel imagen es una cadena base64: data:image/png;base64,...
+            santos_imgs.append(f"![{s['nombre']}]({s['imagen']})")
     
     santoral_texto = "\n".join(santoral_lines)
     if santos_imgs:
@@ -172,24 +178,16 @@ def render_html(markdown_text):
     return f"<!doctype html><html lang='es'><head><meta charset='utf-8'><title>Assumpta</title><link rel='stylesheet' href='../static/style.css'></head><body>{body}</body></html>"
 
 
-def guardar_salida(data, avanzar_estado=False):
-    os.makedirs(OUTPUT_DIR, exist_ok=True)
-    base = f"assumpta-{data['numero_assumpta']}-{data['fecha_iso']}"
+def generar_salida(data, avanzar_estado=False):
     md = render_markdown(data)
     html_text = render_html(md)
-    md_path = os.path.join(OUTPUT_DIR, base + ".md")
-    html_path = os.path.join(OUTPUT_DIR, base + ".html")
-    json_path = os.path.join(OUTPUT_DIR, base + ".json")
-    with open(md_path, "w", encoding="utf-8") as f:
-        f.write(md)
-    with open(html_path, "w", encoding="utf-8") as f:
-        f.write(html_text)
-    with open(json_path, "w", encoding="utf-8") as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
     if avanzar_estado:
-        state = cargar_json(STATE_PATH)
-        state["last_assumpta_number"] = data["numero_assumpta"]
-        state["next_compendio_question"] = data["numero_compendio"] + 1
-        guardar_json(STATE_PATH, state)
-    return md_path, html_path
+        try:
+            state = cargar_json(STATE_PATH)
+            state["last_assumpta_number"] = data["numero_assumpta"]
+            state["next_compendio_question"] = data["numero_compendio"] + 1
+            guardar_json(STATE_PATH, state)
+        except Exception:
+            pass
+    return md, html_text
 

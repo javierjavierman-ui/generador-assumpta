@@ -102,14 +102,6 @@ def generar_imagen_dalle(santo_nombre):
     if not api_key:
         return None
 
-    filename_slug = slugify(santo_nombre)
-    static_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "static", "images"))
-    os.makedirs(static_dir, exist_ok=True)
-    target_path = os.path.join(static_dir, f"{filename_slug}.png")
-
-    if os.path.exists(target_path):
-        return f"static/images/{filename_slug}.png"
-
     prompt = (
         f"Retrato de {santo_nombre}. Estilo pintura clásica al óleo, "
         "arte sacro católico medieval y renacentista, iluminación dramática tenebrista, "
@@ -129,6 +121,7 @@ def generar_imagen_dalle(santo_nombre):
     }
 
     import urllib.request
+    import base64
     try:
         response = requests.post("https://api.openai.com/v1/images/generations", headers=headers, json=payload, timeout=30)
         response.raise_for_status()
@@ -136,10 +129,9 @@ def generar_imagen_dalle(santo_nombre):
         img_url = res_data["data"][0]["url"]
 
         with urllib.request.urlopen(img_url) as response_img:
-            with open(target_path, "wb") as out_file:
-                out_file.write(response_img.read())
-
-        return f"static/images/{filename_slug}.png"
+            img_data = response_img.read()
+            b64 = base64.b64encode(img_data).decode("utf-8")
+            return f"data:image/png;base64,{b64}"
     except Exception as e:
         print(f"Error generando imagen de {santo_nombre}: {e}")
         return None
