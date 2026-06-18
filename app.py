@@ -48,6 +48,35 @@ def index():
             data["mane"] = request.form.get("mane") or generar_mane(data["config"], data["liturgia"])
             data["vida_parroquial"] = vida_parroquial
 
+            libro_titulo = request.form.get("libro_titulo", "").strip()
+            libro_autor = request.form.get("libro_autor", "").strip()
+            libro_texto = request.form.get("libro_texto", "").strip()
+            
+            uploaded_libro_doc = request.files.get("libro_doc")
+            if uploaded_libro_doc and uploaded_libro_doc.filename:
+                suffix = os.path.splitext(uploaded_libro_doc.filename)[1].lower()
+                with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
+                    uploaded_libro_doc.save(tmp.name)
+                    if suffix == ".docx":
+                        from fuentes.word import extraer_texto_docx
+                        libro_texto = extraer_texto_docx(tmp.name)
+                    elif suffix == ".pdf":
+                        from pypdf import PdfReader
+                        reader = PdfReader(tmp.name)
+                        libro_texto = "\n".join(page.extract_text() for page in reader.pages if page.extract_text())
+                os.unlink(tmp.name)
+            
+            uploaded_libro_img = request.files.get("libro_img")
+            libro_img_b64 = request.form.get("libro_img_b64")
+            if uploaded_libro_img and uploaded_libro_img.filename:
+                img_data = uploaded_libro_img.read()
+                libro_img_b64 = "data:image/png;base64," + base64.b64encode(img_data).decode("utf-8")
+
+            data["libro_titulo"] = libro_titulo
+            data["libro_autor"] = libro_autor
+            data["libro_texto"] = libro_texto
+            data["libro_img_b64"] = libro_img_b64
+
             selected_santos = request.form.getlist("santos_seleccionados")
             santos_data = []
             from fuentes.ia import generar_imagen_dalle

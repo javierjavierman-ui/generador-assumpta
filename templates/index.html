@@ -54,6 +54,31 @@
         </section>
 
         <section>
+          <h2>Cada semana, un libro</h2>
+          <div class="grid">
+            <div>
+              <label>Título del libro:</label>
+              <input type="text" name="libro_titulo" value="{{ data.libro_titulo|default('') }}" style="width: 100%;">
+            </div>
+            <div>
+              <label>Autor / Editorial / Precio:</label>
+              <input type="text" name="libro_autor" value="{{ data.libro_autor|default('') }}" placeholder="Ej: Vittorio Messori - Edit. LIBROSLIBRES - 12,00 €" style="width: 100%;">
+            </div>
+          </div>
+          <div style="margin-top: 10px;">
+            <label>Subir Portada (Imagen):</label>
+            <input type="file" name="libro_img" accept="image/*">
+          </div>
+          <div style="margin-top: 10px;">
+            <label>Subir Reseña (Word/PDF):</label>
+            <input type="file" name="libro_doc" accept=".docx,.pdf">
+          </div>
+          <div style="margin-top: 10px;">
+            <textarea name="libro_texto" rows="6" placeholder="O pega aquí el texto de la reseña">{{ data.libro_texto|default('') }}</textarea>
+          </div>
+        </section>
+
+        <section>
           <h2>Vista de fuentes</h2>
 
           <h3>Liturgia Dominical</h3>

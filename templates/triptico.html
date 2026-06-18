@@ -11,9 +11,9 @@
     body {
       margin: 0;
       padding: 0;
-      font-family: Georgia, "Times New Roman", serif;
+      font-family: "Times New Roman", Times, serif;
       background: #ffffff;
-      color: #26211b;
+      color: #000;
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
     }
@@ -37,152 +37,292 @@
       width: 297mm;
       height: 210mm;
       box-sizing: border-box;
-      padding: 10mm 12mm;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12mm;
+      display: flex;
       page-break-after: always;
       position: relative;
-      overflow: hidden;
-      background-color: #fdfaf6;
-    }
-    /* Dotted folding lines for preview (only on screen, hidden in print) */
-    .triptico-page::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: calc(33.333% + 4mm);
-      width: 1px;
-      border-left: 1px dashed #e2d7c5;
-      z-index: 10;
-    }
-    .triptico-page::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: calc(66.666% + 8mm);
-      width: 1px;
-      border-left: 1px dashed #e2d7c5;
-      z-index: 10;
+      background-color: #ffffff;
     }
     .col {
-      display: flex;
-      flex-direction: column;
-      height: 100%;
+      width: 99mm;
+      height: 210mm;
+      padding: 8mm;
       box-sizing: border-box;
-      overflow: hidden;
-      font-size: 0.76rem;
-      line-height: 1.4;
+      position: relative;
+    }
+    /* Líneas de plegado para visualización */
+    .triptico-page::before, .triptico-page::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      border-left: 1px dashed #ccc;
+      z-index: 10;
+    }
+    .triptico-page::before { left: 99mm; }
+    .triptico-page::after { left: 198mm; }
+
+    /* Tipografías y Textos */
+    h1, h2, h3, h4 {
+      font-family: "Impact", "Arial Black", sans-serif;
+      margin: 0;
+      text-transform: uppercase;
+      text-align: center;
     }
     h2 {
-      font-size: 0.95rem;
+      font-size: 14pt;
       color: #4b2e1f;
-      border-bottom: 1px solid #d9c9ab;
-      padding-bottom: 4px;
-      margin-top: 0;
-      margin-bottom: 8px;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      text-align: center;
+      margin-bottom: 8pt;
     }
     p {
-      margin: 0 0 8px 0;
+      margin: 0 0 8pt 0;
       text-align: justify;
-    }
-    .content-area {
-      flex: 1;
-      overflow: hidden;
-    }
-    .footer {
-      font-size: 0.62rem;
-      color: #8c7b6c;
-      text-align: center;
-      border-top: 1px solid #ece0cb;
-      padding-top: 4px;
-      margin-top: auto;
+      font-size: 9pt;
+      line-height: 1.15;
     }
     
-    /* Cover Styling */
-    .portada-col {
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      background: #f7eedf;
-      padding: 15px;
-      border-radius: 8px;
-      border: 1px solid #ebdcb9;
-    }
-    .portada-title {
-      font-size: 2.2rem;
+    /* Capitulares (Drop Caps) */
+    .dropcap > p:first-of-type::first-letter {
+      float: left;
+      font-size: 3.2rem;
+      line-height: 0.8;
+      padding: 4px 4px 0 0;
+      color: #000;
+      font-family: Georgia, serif;
       font-weight: bold;
-      color: #4b2e1f;
-      margin: 10px 0 2px 0;
-      letter-spacing: 0.1em;
-    }
-    .portada-subtitle {
-      font-size: 0.65rem;
-      letter-spacing: 0.15em;
-      text-transform: uppercase;
-      color: #7a5c3a;
-      margin-bottom: 25px;
-    }
-    .portada-details {
-      margin-top: auto;
-      font-size: 0.8rem;
-      color: #3b2c1d;
     }
     
-    /* Saints illustration */
-    .santo-item {
-      margin-bottom: 12px;
-      background: #ffffff;
-      border: 1px solid #ebdcb9;
-      border-radius: 6px;
-      padding: 6px;
+    /* Listas y Viñetas de Vida Parroquial */
+    .vp-list {
+      list-style-type: none;
+      padding: 0;
+      margin: 0 0 10px 0;
     }
-    .santo-header {
-      font-weight: bold;
-      color: #4b2e1f;
+    .vp-list li {
+      position: relative;
+      padding-left: 14px;
       margin-bottom: 4px;
-      font-size: 0.72rem;
+      text-align: justify;
+      font-size: 9pt;
+      line-height: 1.15;
+    }
+    .vp-list li::before {
+      content: "❑";
+      position: absolute;
+      left: 0;
+      top: 0;
+      font-size: 8pt;
+    }
+
+    /* Portada Exterior */
+    .portada-container {
+      position: relative;
+      height: 100%;
+      padding-left: 20mm; /* Espacio para la banda gris */
+    }
+    .banda-lateral {
+      position: absolute;
+      left: -8mm;
+      top: -8mm;
+      bottom: -8mm;
+      width: 25mm;
+      background-color: #dcdcdc;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+    .banda-texto {
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      font-family: "Arial", sans-serif;
+      font-size: 16pt;
+      color: #ffffff;
+      letter-spacing: 2pt;
+      text-transform: uppercase;
+      white-space: nowrap;
+    }
+    .logo-circulo {
+      position: absolute;
+      top: 20mm;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 18mm;
+      height: 18mm;
+      background: #ffcc00;
+      border-radius: 50%;
+      border: 1px solid #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 8pt;
+      text-align: center;
+    }
+    
+    /* Elementos Portada */
+    .portada-titulo {
+      font-family: "Impact", "Arial Black", sans-serif;
+      font-size: 38pt;
+      color: #3b3b3b;
+      margin-top: 5mm;
+      line-height: 1;
+    }
+    .portada-subtitulo {
+      font-family: "Arial", sans-serif;
+      font-size: 9pt;
+      font-weight: bold;
+      letter-spacing: 2px;
+      margin-bottom: 15mm;
+    }
+    
+    .santos-container {
+      display: flex;
+      gap: 10px;
+      position: absolute;
+      bottom: 0;
+      left: 20mm;
+      right: 0;
+    }
+    .santo-box {
+      flex: 1;
+      text-align: center;
     }
     .santo-img {
       width: 100%;
-      height: 100px;
+      height: 60px;
       object-fit: cover;
-      border-radius: 4px;
-      border: 1px solid #ece0cb;
-      margin-top: 4px;
+      border: 1px solid #ccc;
+    }
+    .santo-nombre {
+      font-size: 7pt;
+      font-weight: bold;
+      margin-top: 2px;
     }
 
-    /* Fixed info list */
-    .info-list {
-      list-style-type: none;
-      padding: 0;
-      margin: 0;
+    /* Datos Fijos Central */
+    .datos-fijos {
+      text-align: center;
+      font-size: 8.5pt;
     }
-    .info-list li {
-      margin-bottom: 6px;
-      padding-bottom: 6px;
-      border-bottom: 1px dashed #e2d7c5;
+    .datos-fijos-img {
+      width: 100%;
+      height: 40mm;
+      background: #ddd;
+      margin-bottom: 10mm;
+      object-fit: cover;
     }
-    .info-list li:last-child {
-      border-bottom: none;
+    .df-bloque {
+      margin-bottom: 6pt;
+    }
+    .df-titulo {
+      font-family: "Arial", sans-serif;
+      font-weight: bold;
+      font-size: 8.5pt;
+      margin-bottom: 1pt;
+    }
+
+    /* Compendio */
+    .compendio-header {
+      text-align: center;
+      margin-bottom: 10pt;
+    }
+    .compendio-header h2 {
+      font-size: 16pt;
+      color: #777;
+      margin-bottom: 2pt;
+    }
+    .compendio-header .sub {
+      font-size: 9pt;
+      font-family: "Arial", sans-serif;
+    }
+    
+    /* Liturgia */
+    .liturgia-img {
+      width: 100%;
+      height: 45mm;
+      background: #ddd;
+      margin-bottom: 4mm;
+      object-fit: cover;
+    }
+    .liturgia-refs {
+      text-align: center;
+      font-family: "Arial", sans-serif;
+      font-size: 9pt;
+      margin-bottom: 6pt;
+    }
+    
+    /* Vida Parroquial */
+    .vp-img-container {
+      position: relative;
+      margin-bottom: 10mm;
+    }
+    .vp-img {
+      width: 100%;
+      height: 40mm;
+      background: #ddd;
+      object-fit: cover;
+    }
+    .vp-mane {
+      position: absolute;
+      top: 5mm;
+      left: 0;
+      right: 0;
+      text-align: center;
+      color: white;
+      font-family: Georgia, serif;
+      font-style: italic;
+      font-size: 10pt;
+      text-shadow: 1px 1px 2px black;
+    }
+    .vp-titulo {
+      font-family: "Arial Black", sans-serif;
+      color: #cc0000;
+      text-align: center;
+      font-size: 14pt;
+      margin-bottom: 5mm;
+    }
+
+    /* Libro y Papa */
+    .libro-box {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10mm;
+    }
+    .libro-img {
+      width: 25mm;
+      height: auto;
+      border: 1px solid #ccc;
+    }
+    .libro-info {
+      flex: 1;
+    }
+    .libro-titulo {
+      font-family: "Arial Black", sans-serif;
+      font-size: 10pt;
+      color: #770000;
+    }
+    .libro-autor {
+      font-family: "Arial", sans-serif;
+      font-size: 8pt;
+      margin-bottom: 4pt;
+    }
+    
+    .papa-box {
+      display: flex;
+      gap: 10px;
+      margin-top: 5px;
+    }
+    .papa-img {
+      width: 20mm;
+      height: 30mm;
+      object-fit: cover;
+      background: #ddd;
     }
 
     /* Hide UI in print */
     @media print {
-      .print-button-container {
-        display: none;
-      }
-      .triptico-page::before, .triptico-page::after {
-        display: none;
-      }
-      .triptico-page {
-        background-color: #ffffff;
-      }
+      .print-button-container { display: none; }
+      .triptico-page::before, .triptico-page::after { display: none; }
     }
   </style>
 </head>
@@ -190,184 +330,228 @@
 
   <div class="print-button-container">
     <button class="btn-print-action" onclick="window.print()">🖨️ Imprimir / Guardar como PDF</button>
-    <p style="margin: 5px 0 0 0; font-size: 0.8rem; text-align: center; color: #6b3d22;">
-      Consejo: En las opciones de impresión, activa la <strong>Impresión a doble cara</strong> y <strong>Opciones de fondo / Gráficos de fondo</strong> para el mejor resultado.
-    </p>
   </div>
 
-  <!-- PAGINA 1: EXTERIOR (Izquierda: Contraportada | Centro: Info Fija | Derecha: Portada) -->
+  <!-- PÁGINA 1: EXTERIOR -->
   <div class="triptico-page">
     
-    <!-- Columna 1: Contraportada (Nuestro Servicio Informativo) -->
+    <!-- Columna Izquierda: COMPENDIO -->
     <div class="col">
-      <h2>Servicio Informativo</h2>
-      <div class="content-area">
-        <p>Entradas destacadas de nuestra web:</p>
-        <ul style="padding-left: 15px; margin: 0;">
+      <div class="compendio-header">
+        <h2 style="color:#aaa;">CATECISMO DE<br>LA IGLESIA CATÓLICA</h2>
+        <div class="sub">COMPENDIO</div>
+      </div>
+      <div style="font-family: 'Arial', sans-serif; font-size: 8.5pt; text-align: center; margin-bottom: 10px; text-transform: uppercase;">
+        SEGUNDA SECCIÓN<br>
+        <strong>LOS SIETE SACRAMENTOS DE LA IGLESIA</strong><br>
+        CAPÍTULO SEGUNDO<br>
+        <strong>LOS SACRAMENTOS AL SERVICIO DE LA COMUNIÓN Y DE LA MISIÓN</strong>
+      </div>
+      <div style="white-space: pre-wrap; font-size: 8.5pt; text-align: justify;">{{ data.compendio }}</div>
+    </div>
+
+    <!-- Columna Centro: DATOS FIJOS -->
+    <div class="col datos-fijos">
+      <div class="datos-fijos-img">
+        <div style="padding-top: 15mm; color: #777;">[Foto Fachada Parroquia]</div>
+      </div>
+      
+      <div class="df-bloque">
+        <div class="df-titulo">APERTURA DE LA IGLESIA</div>
+        Está abierta permanentemente desde las 8:30 a las 14:00<br>
+        y desde las 17:00 a las 21:00.
+      </div>
+      <div class="df-bloque">
+        <div class="df-titulo">MISAS</div>
+        Lunes a sábado, 9:00 y 20:00<br>
+        Domingo, 10:00, 11:00, 12:00, 13:00, 19:00 y 20:00
+      </div>
+      <div class="df-bloque">
+        <div class="df-titulo">CONFESIONES</div>
+        Lunes y miércoles, de 19:00 a 20:00<br>
+        y resto de los días, 1/2 hora antes de cada Misa
+      </div>
+      <div class="df-bloque">
+        <div class="df-titulo">EXPOSICIÓN DEL SANTÍSIMO SACRAMENTO</div>
+        Jueves, 19:00
+      </div>
+      <div class="df-bloque">
+        <div class="df-titulo">ROSARIO</div>
+        Lunes a sábado, 19:30<br>
+        Domingo, 18:30
+      </div>
+      <div class="df-bloque">
+        <div class="df-titulo">CÁRITAS</div>
+        Miércoles, de 18:30 a 20:00, en la casa parroquial.<br>
+        En caso de emergencia llamar al teléfono 660.92.94.59
+      </div>
+      <div class="df-bloque">
+        <div class="df-titulo">DESPACHO PARROQUIAL Y CEMENTERIO</div>
+        Lunes y miércoles, de 20:30 a 21:30<br>
+        Jueves y sábados, de 10:00 a 11:30
+      </div>
+      <div class="df-bloque" style="background: #f0f0f0; padding: 4px; margin-top: 10px;">
+        <strong>PARROQUIA ASUNCIÓN DE NUESTRA SEÑORA</strong><br>
+        Camino de Valladolid, 26<br>
+        Tel: 91.859.12.72 / Urgencias: 626.69.21.00<br>
+        E-mail: pasuntorre@gmail.com<br>
+        https://www.parroquiatorrelodones.com/
+      </div>
+    </div>
+
+    <!-- Columna Derecha: PORTADA -->
+    <div class="col">
+      <div class="portada-container">
+        
+        <div class="banda-lateral">
+          <div class="logo-circulo">LOGO</div>
+          <div class="banda-texto">PARROQUIA ASUNCIÓN DE NUESTRA SEÑORA</div>
+        </div>
+
+        <div class="portada-titulo">ASSUMPTA</div>
+        <div class="portada-subtitulo">
+          NÚMERO {{ data.numero_assumpta }}<br>
+          {{ data.fecha_larga }}
+        </div>
+
+        <div style="font-style: italic; text-align: justify; font-size: 9.5pt; line-height: 1.15;">
+          {% for para in data.carta.split('\n\n') %}
+            {% if para.strip() %}
+              <p>{{ para }}</p>
+            {% endif %}
+          {% endfor %}
+        </div>
+        <div style="text-align: right; font-style: italic; font-size: 9.5pt; margin-top: 5px;">
+          Vuestro Párroco
+        </div>
+
+        <div class="santos-container">
+          {% for santo in data.santos_seleccionados[:2] %}
+          <div class="santo-box">
+            {% if santo.imagen %}
+              <img src="{{ santo.imagen }}" class="santo-img">
+            {% else %}
+              <div class="santo-img" style="display:flex; align-items:center; justify-content:center; background:#eee; font-size:7pt;">Sin Imagen</div>
+            {% endif %}
+            <div class="santo-nombre">{{ santo.nombre }}</div>
+          </div>
+          {% endfor %}
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- PÁGINA 2: INTERIOR -->
+  <div class="triptico-page">
+    
+    <!-- Columna Izquierda: LITURGIA -->
+    <div class="col">
+      <div class="liturgia-img">
+        <div style="padding-top: 18mm; text-align: center; color: #777;">[Imagen Jesús/Evangelio]</div>
+      </div>
+      <h2 style="color: #666;">{{ data.liturgia.celebracion }}</h2>
+      
+      <div class="liturgia-refs">
+        <strong>Lecturas:</strong> {{ data.liturgia.lecturas }}<br>
+        <em style="font-weight:bold;">Salmo: {{ data.liturgia.salmo }}</em><br>
+        <em style="font-weight:bold;">Evangelio: {{ data.liturgia.evangelio }}</em>
+      </div>
+
+      <div class="dropcap">
+        <p>En aquel tiempo, {{ data.liturgia.evangelio_texto if data.liturgia.evangelio_texto else 'el Señor dijo a sus discípulos... (Falta texto del evangelio en data, se puede generar con IA)' }}</p>
+      </div>
+      <div style="text-align: right; font-style: italic; font-weight: bold; font-size: 9pt; margin-top: 5px;">
+        Palabra del Señor
+      </div>
+      
+      <!-- Placeholder Anuncio Madrid -->
+      <div style="margin-top: auto; border: 1px solid #0055a4; background: #e6f2ff; padding: 5px; font-family: 'Arial', sans-serif;">
+        <div style="font-size: 7pt; color: #0055a4;">Apertura del canal oficial de WhatsApp de la archidiócesis de Madrid</div>
+        <div style="font-size: 12pt; font-weight: bold; color: #0055a4; margin-top: 4px;">La Iglesia en Madrid,<br>cerca de ti</div>
+      </div>
+    </div>
+
+    <!-- Columna Centro: VIDA PARROQUIAL -->
+    <div class="col">
+      <div class="vp-img-container">
+        <div class="vp-img">
+          <div style="padding-top: 15mm; text-align: center; color: #777;">[Imagen Virgen]</div>
+        </div>
+        <div class="vp-mane">{{ data.mane }}</div>
+      </div>
+      
+      <div class="vp-titulo">VIDA PARROQUIAL</div>
+      
+      <ul class="vp-list">
+        {% for para in data.vida_parroquial.split('\n\n') %}
+          {% if para.strip() %}
+            <li>{{ para.replace('❑', '').strip() }}</li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+
+      <div style="border: 1px solid #000; padding: 4px; font-family: 'Arial', sans-serif; font-size: 8pt; margin-top: auto;">
+        <strong>Nuestro Servicio Informativo (www.parroquiatorrelodones.com)</strong><br>
+        Entradas recientes:<br>
+        <ul style="padding-left: 10px; margin: 2px 0 0 0; list-style-type: '→ ';">
           {% for item in data.servicio %}
-            <li style="margin-bottom: 8px;">
-              <strong>{{ item.titulo }}</strong><br>
-              <span style="font-size: 0.65rem; color: #7a5c3a;">parroquiatorrelodones.com</span>
-            </li>
+            <li>{{ item.titulo }}</li>
           {% endfor %}
         </ul>
       </div>
-      <div class="footer">
-        PARROQUIA ASUNCIÓN DE NUESTRA SEÑORA · TORRELODONES
-      </div>
     </div>
 
-    <!-- Columna 2: Central (Datos Fijos y Avisos) -->
+    <!-- Columna Derecha: LIBRO Y PAPA -->
     <div class="col">
-      <h2>Información Parroquial</h2>
-      <div class="content-area">
-        <ul class="info-list">
-          <li>
-            <strong>Apertura de la Iglesia:</strong><br>
-            De 8:30 a 14:00 y de 17:00 a 21:00.
-          </li>
-          <li>
-            <strong>Horario de Misas:</strong><br>
-            Lunes a sábado: 9:00 y 20:00.<br>
-            Domingos y festivos: 10:00, 11:00, 12:00, 13:00, 19:00 y 20:00.
-          </li>
-          <li>
-            <strong>Confesiones:</strong><br>
-            Lunes y miércoles: 19:00 a 20:00.<br>
-            Resto de días: Media hora antes de cada Misa.
-          </li>
-          <li>
-            <strong>Mane nobiscum, Domine:</strong><br>
-            <em style="color: #6b3d22;">{{ data.mane }}</em>
-          </li>
-        </ul>
+      <div style="background: #eef8df; text-align: center; font-family: 'Arial Black', sans-serif; padding: 2px; margin-bottom: 8px;">
+        CADA SEMANA, UN LIBRO
       </div>
-      <div class="footer">
-        Assumpta Nº {{ data.numero_assumpta }}
-      </div>
-    </div>
-
-    <!-- Columna 3: Portada (Cover) -->
-    <div class="col portada-col">
-      <div class="portada-title">ASSUMPTA</div>
-      <div class="portada-subtitle">Hoja Parroquial Informativa</div>
       
-      <div class="content-area" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
-        <span style="font-size: 3rem; color: #6b3d22; line-height: 1;">⛪</span>
-        <div style="font-size: 0.95rem; font-weight: bold; margin-top: 15px; color: #4b2e1f;">
-          Asunción de Nuestra Señora
-        </div>
-        <div style="font-size: 0.75rem; color: #7a5c3a; letter-spacing: 0.05em; margin-top: 5px;">
-          Torrelodones (Madrid)
-        </div>
-      </div>
-
-      <div class="portada-details">
-        <strong>Nº {{ data.numero_assumpta }}</strong><br>
-        <span style="font-size: 0.7rem; text-transform: uppercase;">{{ data.fecha_larga }}</span>
-      </div>
-    </div>
-
-  </div>
-
-
-  <!-- PAGINA 2: INTERIOR (Izquierda: Carta del Párroco | Centro: Liturgia | Derecha: Compendio y Papa) -->
-  <div class="triptico-page">
-    
-    <!-- Columna 1: Carta del Párroco -->
-    <div class="col">
-      <h2>Carta del Párroco</h2>
-      <div class="content-area" style="font-style: italic;">
-        {% for para in data.carta.split('\n\n') %}
-          {% if para.strip() %}
-            <p>{{ para }}</p>
-          {% endif %}
-        {% endfor %}
-      </div>
-      <div class="footer">
-        Queremos escucharte: párroco online
-      </div>
-    </div>
-
-    <!-- Columna 2: Liturgia Dominical -->
-    <div class="col">
-      <h2>Liturgia Dominical</h2>
-      <div class="content-area">
-        <div style="font-weight: bold; color: #6b3d22; font-size: 0.8rem; margin-bottom: 6px; text-align: center;">
-          {{ data.liturgia.celebracion }}
-        </div>
-        
-        <p><strong>Lecturas:</strong> {{ data.liturgia.lecturas }}</p>
-        <p><strong>Salmo:</strong> {{ data.liturgia.salmo }}</p>
-        <p><strong>Evangelio:</strong> {{ data.liturgia.evangelio }}</p>
-        
-        <div style="border-top: 1px dashed #d9c9ab; margin-top: 8px; padding-top: 8px; font-size: 0.72rem;">
-          <strong>Reflexión del Evangelio:</strong>
-          <p style="margin-top: 4px;">{{ data.liturgia.evangelio_texto if data.liturgia.evangelio_texto else 'Contenido del Evangelio proclamado.' }}</p>
-        </div>
-      </div>
-      <div class="footer">
-        Lecturas oficiales de la Conferencia Episcopal
-      </div>
-    </div>
-
-    <!-- Columna 3: Santos Destacados e Iglesia -->
-    <div class="col">
-      <h2>Santos y Compendio</h2>
-      <div class="content-area">
-        <!-- Santos seleccionados con imágenes -->
-        {% if data.santos_seleccionados %}
-          <div style="margin-bottom: 10px;">
-            <strong>Santos de la semana:</strong>
-            <div style="display: flex; gap: 8px; margin-top: 4px;">
-              {% for santo in data.santos_seleccionados %}
-                <div class="santo-item" style="flex: 1; text-align: center; margin-bottom: 0;">
-                  <div class="santo-header" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
-                    {{ santo.nombre.split(',')[0] }}
-                  </div>
-                  {% if santo.imagen %}
-                    <img class="santo-img" src="/{{ santo.imagen }}" alt="{{ santo.nombre }}">
-                  {% else %}
-                    <div style="height: 100px; background: #efe5d5; display: flex; align-items: center; justify-content: center; border-radius: 4px; font-size: 0.6rem; color: #7a5c3a;">
-                      [Sin Imagen]
-                    </div>
-                  {% endif %}
-                </div>
-              {% endfor %}
-            </div>
-          </div>
+      {% if data.libro_titulo %}
+      <div class="libro-box">
+        {% if data.libro_img_b64 %}
+          <img src="{{ data.libro_img_b64 }}" class="libro-img">
+        {% else %}
+          <div class="libro-img" style="background:#eee; display:flex; align-items:center; justify-content:center; font-size:6pt;">Sin Portada</div>
         {% endif %}
-
-        <!-- Compendio del Catecismo -->
-        <div style="border-top: 1px dashed #d9c9ab; padding-top: 6px; margin-top: 6px;">
-          <strong>Catecismo Compendio:</strong>
-          <div style="margin-top: 4px; font-size: 0.7rem;">
-            {{ data.compendio }}
-          </div>
+        <div class="libro-info">
+          <div class="libro-titulo">{{ data.libro_titulo }}</div>
+          <div class="libro-autor">{{ data.libro_autor }}</div>
         </div>
+      </div>
+      
+      <div class="dropcap">
+        <p>{{ data.libro_texto }}</p>
+      </div>
+      {% else %}
+      <div style="font-style: italic; color: #999; text-align: center; margin-bottom: 20px;">
+        (No se ha añadido reseña de libro esta semana)
+      </div>
+      {% endif %}
 
-        <!-- Habla el Papa -->
-        <div style="border-top: 1px dashed #d9c9ab; padding-top: 6px; margin-top: 6px;">
-          <strong>Habla el Papa:</strong>
-          <div style="margin-top: 4px; font-size: 0.7rem; font-style: italic;">
-            "{{ data.papa.extracto }}"
+      <div style="border-top: 1px solid #ccc; margin-top: 15px; padding-top: 10px;">
+        <h2 style="font-size: 10pt; color: #000; font-family: 'Arial', sans-serif; font-weight: normal; margin-bottom: 2px;">
+          <strong>HABLA EL PAPA</strong>
+        </h2>
+        <div style="font-style: italic; font-family: Georgia, serif; font-size: 10pt; font-weight: bold; text-align: center; margin-bottom: 8px;">
+          Mensaje del papa León XIV
+        </div>
+        
+        <div class="papa-box">
+          <div class="papa-img">
+            <div style="padding-top: 10mm; text-align: center; color: #777; font-size: 6pt;">[Foto Papa]</div>
+          </div>
+          <div style="flex: 1;" class="dropcap">
+            <p>{{ data.papa.extracto }}</p>
           </div>
         </div>
       </div>
-      <div class="footer">
-        Fe y Magisterio de la Iglesia
-      </div>
+
     </div>
 
   </div>
 
-  <script>
-    // Automatically trigger printing after a brief delay to allow layout to settle
-    window.addEventListener('load', function() {
-      setTimeout(function() {
-        window.print();
-      }, 500);
-    });
-  </script>
 </body>
 </html>
