@@ -99,8 +99,13 @@ def index():
     action = local_app.read_field(form, "action", "proof")
     proof = action != "production"
     result, data, next_question = handler.build_result_from_form(form, simulation=simulation, proof=proof)
-    if result.get("pdf"):
-        result["pdf"] = os.path.join(local_app.BASE_DIR, "output", os.path.basename(result["pdf"]))
+    if result.get("pdf") and os.path.exists(result["pdf"]):
+        return send_file(
+            result["pdf"],
+            mimetype="application/pdf",
+            as_attachment=False,
+            download_name=os.path.basename(result["pdf"]),
+        )
     handler.render_form(result=result, data=data, next_question=next_question, simulation=simulation)
     return _response_from_handler(handler)
 
