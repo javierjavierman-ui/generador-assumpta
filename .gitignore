@@ -10,3 +10,4 @@ assets/liturgy_sources/
 active_tunnel_url.txt
 .env
 .vercel/
+.vercel
