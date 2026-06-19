@@ -81,8 +81,14 @@ def index():
     tmpdir = tempfile.gettempdir()
     assumpta_core.OUTPUT_DIR = os.path.join(tmpdir, "output")
     assumpta_core.PREVIEW_DIR = os.path.join(tmpdir, "previews")
+    assumpta_core.ASSET_DIR = os.path.join(tmpdir, "assets")
+    assumpta_core.LITURGY_SOURCE_DIR = os.path.join(tmpdir, "liturgy_sources")
+    local_app.UPLOAD_DIR = os.path.join(tmpdir, "uploads")
     os.makedirs(assumpta_core.OUTPUT_DIR, exist_ok=True)
     os.makedirs(assumpta_core.PREVIEW_DIR, exist_ok=True)
+    os.makedirs(assumpta_core.ASSET_DIR, exist_ok=True)
+    os.makedirs(assumpta_core.LITURGY_SOURCE_DIR, exist_ok=True)
+    os.makedirs(local_app.UPLOAD_DIR, exist_ok=True)
     form = cgi.FieldStorage(fp=io.BytesIO(request.get_data()), headers=dict(request.headers), environ={
             "REQUEST_METHOD": "POST",
             "CONTENT_TYPE": request.headers.get("Content-Type", ""),
