@@ -1,79 +1,71 @@
 # Generador Assumpta
 
-App web local para preparar la hoja parroquial Assumpta.
+App local para preparar semanalmente la hoja parroquial Assumpta y exportar un PDF en formato triptico.
+La version actual usa el PDF `1233-Assumpta-07-06-2026.pdf` como fondo visual para conservar la apariencia del folleto.
 
 ## Arranque
 
 ```bash
-cd /Users/javiermanuelrodriguezrodriguez/Desktop/Assumpta/generador_assumpta
-python3 -m pip install -r requirements.txt
-python3 app.py
+/Users/javiermanuelrodriguezrodriguez/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 app.py
 ```
 
-Abrir: http://127.0.0.1:5000
+Abrir en el navegador:
 
-## IA: OpenAI o Minimax
-
-La app funciona aunque no haya proveedor de IA configurado: genera borradores locales editables.
-
-El proveedor se elige en `config.json` con `ai_provider`:
-
-```json
-"ai_provider": "openai"
+```text
+http://127.0.0.1:5000
 ```
 
-o bien:
+Si el puerto 5000 esta ocupado, la app usara automaticamente el siguiente disponible entre 5001 y 5009.
 
-```json
-"ai_provider": "minimax_free"
-```
+## Acceso
 
-### OpenAI
+- Usuario: `pasuntorre`
+- Contraseña: `pasuntorre26..`
 
-OpenAI lee la clave desde la variable de entorno `OPENAI_API_KEY` o desde un archivo local `.env`.
+## Flujo semanal
 
-Forma sencilla:
+1. Indicar la fecha del domingo.
+2. Confirmar el numero de Assumpta.
+3. Cargar o pegar la carta del parroco, o dejarla vacia para que la app proponga un borrador.
+4. Revisar el Catecismo, que se rellena automaticamente desde el Compendio.
+5. Revisar Evangelio, lecturas, cargar Secuencia desde Word si corresponde, y revisar imagen liturgica.
+6. Cargar el Word o pegar el texto del anuncio central. Si se desea, cargar tambien una imagen para que aparezca encima del texto.
+7. Cargar el Word de "Habla el Papa".
+8. Elegir uno o dos santos.
+9. Pulsar "Previsualizar triptico".
+10. Revisar las dos paginas completas.
+11. Abrir el PDF final y, si es correcto, marcar "Actualizar estado".
+
+## Reglas incorporadas
+
+- El numero sube siempre en 1.
+- La fecha es la del domingo.
+- El Compendio continua por la pregunta 330 y añade las preguntas que caben.
+- El Compendio incluye el encabezado doctrinal fijo de la Segunda Seccion antes de las preguntas.
+- Los datos fijos, avisos fijos, pie central, imagen superior del Papa y Servicio Informativo quedan congelados desde la plantilla visual.
+- El anuncio central se carga desde Word, texto pegado e imagen opcional. Si hay texto e imagen, la imagen queda arriba y el texto debajo.
+- "Habla el Papa" se carga desde Word.
+- El Evangelio se consulta en Vatican News, seccion "Palabra del dia".
+- El Aleluya completo es fijo y se imprime antes del Evangelio.
+- La app añade automaticamente el titulo "Santo Evangelio segun..." a partir de la referencia.
+- La app ofrece santos de la semana para elegir y descarga imagenes automaticamente cuando puede.
+- El PDF se genera escribiendo solo encima de los huecos variables del folleto original.
+
+## Nota sobre el Evangelio
+
+Vatican News es una fuente del Dicasterio para la Comunicacion de la Santa Sede. Su seccion "Palabra del dia" indica que propone lecturas segun el calendario liturgico vaticano. La app conserva la URL usada y avisa si conviene comparar con el calendario local de España.
+
+## Mostrar la app a otras personas
+
+Para una demostracion con URL temporal:
 
 ```bash
-python3 setup_openai_key.py
-python3 app.py
+sh compartir_app.sh
 ```
 
-Forma manual:
+La app pedira las mismas credenciales:
 
-```bash
-export OPENAI_API_KEY="tu_clave_aqui"
-python3 app.py
-```
+- Usuario: `pasuntorre`
+- Contraseña: `pasuntorre26..`
 
-`config.json` permite elegir modelo:
-
-```json
-"openai": {
-  "model": "gpt-4o-mini",
-  "base_url": "https://api.openai.com/v1/chat/completions"
-}
-```
-
-### Minimax
-
-Para activar Minimax, edita `config.json` y completa:
-
-```json
-"minimax": {
-  "api_key": "TU_TOKEN_LOCAL",
-  "base_url": "ENDPOINT_COMPATIBLE_CHAT_COMPLETIONS",
-  "model": "MiniMax-Text-01"
-}
-```
-
-No pegues claves en chats ni en repositorios publicos.
-
-## Estado
-
-`state.json` guarda:
-
-- `last_assumpta_number`
-- `next_compendio_question`
-
-Al pulsar "Generar HTML/Markdown y avanzar estado", la app incrementa ambos valores.
+La URL temporal funcionara mientras el ordenador este encendido y la ventana del tunel siga abierta. Si aparece el aviso `No se encontro cloudflared`, hay que instalar Cloudflare Tunnel antes de compartir la app.

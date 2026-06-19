@@ -1,0 +1,257 @@
+{
+  "documento": {
+    "nombre": "Hoja parroquial Assumpta",
+    "ejemplo_analizado": "1233-Assumpta-07-06-2026.pdf",
+    "formato": "Triptico A4 apaisado, 2 paginas, 6 paneles",
+    "estado": "criterios_base_validados_por_usuario"
+  },
+  "estado_semanal": {
+    "numero_assumpta_ultimo_publicado": 1233,
+    "fecha_ultimo_publicado": "2026-06-07",
+    "siguiente_numero_sugerido": 1234,
+    "siguiente_fecha_sugerida": "2026-06-14",
+    "compendio_siguiente_pregunta_sugerida": 330
+  },
+  "secciones": [
+    {
+      "id": "cabecera_portada",
+      "titulo_visible": "ASSUMPTA",
+      "tipo": "variable",
+      "contenido_detectado": "Numero, fecha, parroquia y marca grafica.",
+      "criterio_propuesto": "Incrementar numero en 1 y usar siempre la fecha del domingo de publicacion.",
+      "criterio_validado": {
+        "numero": "sumar_1_cada_semana",
+        "fecha": "domingo_de_publicacion"
+      },
+      "preguntas_para_usuario": [],
+      "fuentes_candidatas": [
+        "https://www.parroquiatorrelodones.com/assumpta/"
+      ]
+    },
+    {
+      "id": "carta_parroco",
+      "titulo_visible": "Queridos feligreses",
+      "tipo": "texto_manual_con_ajuste_de_espacio",
+      "contenido_detectado": "Carta pastoral breve firmada como Vuestro Parroco, relacionada con la liturgia o un acontecimiento parroquial/diocesano.",
+      "criterio_propuesto": "La app permitira cargar o pegar el texto del parroco y ajustara automaticamente el tamaño para que quepa en la seccion, avisando si el texto supera un limite razonable.",
+      "criterio_validado": {
+        "origen": "texto_cargado_en_la_app",
+        "ia": "no_generar_contenido_por_defecto",
+        "ajuste": "reducir_tamano_tipografico_y_alertar_si_no_cabe"
+      },
+      "preguntas_para_usuario": [],
+      "fuentes_candidatas": [
+        "https://www.aciprensa.com/calendario/",
+        "https://www.conferenciaepiscopal.es/",
+        "https://www.archimadrid.org/"
+      ]
+    },
+    {
+      "id": "datos_fijos_parroquia",
+      "titulo_visible": "Apertura de la iglesia / Misas / Confesiones / Exposicion / Rosario / Caritas / Charla prebautismal / Despacho / Equipo pastoral / Contacto",
+      "tipo": "texto_manual_desde_word",
+      "contenido_detectado": "Horarios, contactos, direccion, sacerdotes y servicios ordinarios.",
+      "criterio_propuesto": "Cargar los datos fijos desde un documento Word preparado por el usuario y ajustar el texto al panel central interior.",
+      "criterio_validado": {
+        "origen": "Word_docx",
+        "actualizacion": "manual",
+        "ajuste": "mostrar_previsualizacion_y_alerta_de_espacio"
+      },
+      "preguntas_para_usuario": [],
+      "fuentes_candidatas": [
+        "https://www.parroquiatorrelodones.com/horarios/",
+        "https://www.parroquiatorrelodones.com/"
+      ]
+    },
+    {
+      "id": "catecismo_compendio",
+      "titulo_visible": "Catecismo de la Iglesia Catolica - Compendio",
+      "tipo": "secuencial_desde_pdf",
+      "contenido_detectado": "Preguntas 325 a 329 del Compendio en el numero 1233.",
+      "criterio_propuesto": "Continuar desde la pregunta 330 y añadir tantas preguntas como quepan en el espacio disponible de la seccion, respetando continuidad y titulos doctrinales.",
+      "criterio_validado": {
+        "siguiente_pregunta": 330,
+        "cantidad": "las_que_quepan_en_la_seccion",
+        "fuente": "Compendio.pdf_local"
+      },
+      "preguntas_para_usuario": [],
+      "fuentes_candidatas": [
+        "Compendio.pdf local",
+        "https://www.vatican.va/archive/compendium_ccc/documents/archive_2005_compendium-ccc_sp.html"
+      ]
+    },
+    {
+      "id": "santoral_portada",
+      "titulo_visible": "Santos destacados con imagen",
+      "tipo": "variable",
+      "contenido_detectado": "Dos santos de la semana: Bernabe y Antonio de Padua.",
+      "criterio_propuesto": "La app ofrecera santos de la semana para que el usuario elija; despues proporcionara imagenes candidatas para los santos seleccionados.",
+      "criterio_validado": {
+        "seleccion": "usuario_elige_entre_santos_de_la_semana",
+        "imagenes": "proporcionar_imagenes_correspondientes_para_revision"
+      },
+      "preguntas_para_usuario": [],
+      "fuentes_candidatas": [
+        "https://www.santopedia.com/santoral/",
+        "https://www.aciprensa.com/santos"
+      ]
+    },
+    {
+      "id": "liturgia_dominical",
+      "titulo_visible": "Domingo / solemnidad, lecturas, salmo, secuencia, aleluya y evangelio",
+      "tipo": "variable",
+      "contenido_detectado": "Corpus Christi: Dt 8, 2-3.14b-16a; 1Cor 10,16-17; Sal 147; secuencia; Jn 6,51-58.",
+      "criterio_propuesto": "Rellenar con las lecturas del domingo correspondiente; el Evangelio debe proceder de fuente oficial de la Santa Sede/Vaticano, preferentemente Vatican News - Palabra del dia.",
+      "criterio_validado": {
+        "evangelio_fuente_obligatoria": "Vatican News - Palabra del dia",
+        "url_patron": "https://www.vaticannews.va/es/evangelio-de-hoy/YYYY/MM/DD.html",
+        "validacion": "mostrar_url_y_fecha_de_la_fuente_en_la_app",
+        "nota": "Vatican News indica que usa lecturas segun calendario liturgico vaticano; la app debe advertir si el calendario local de España difiere."
+      },
+      "preguntas_para_usuario": [],
+      "fuentes_candidatas": [
+        "https://www.vaticannews.va/es/evangelio-de-hoy/",
+        "https://www.vatican.va/content/vatican/es/events.html",
+        "https://www.conferenciaepiscopal.es/"
+      ]
+    },
+    {
+      "id": "mane_nobiscum_domine",
+      "titulo_visible": "Mane nobiscum, Domine",
+      "tipo": "imagen_o_lema",
+      "contenido_detectado": "Frase/titulo sobre imagen en cabecera de Vida Parroquial.",
+      "criterio_propuesto": "Mantener como lema fijo o generar breve frase espiritual ligada al domingo.",
+      "preguntas_para_usuario": [
+        "¿Esta seccion debe ser solo el lema fijo o quieres una frase nueva cada semana?",
+        "¿La imagen de fondo cambia semanalmente o es fija?"
+      ],
+      "fuentes_candidatas": [
+        "Banco de imagenes propio",
+        "Imagenes parroquiales locales"
+      ]
+    },
+    {
+      "id": "vida_parroquial",
+      "titulo_visible": "VIDA PARROQUIAL",
+      "tipo": "agenda_y_avisos",
+      "contenido_detectado": "Avisos con casillas: apertura de iglesia, segundos sabados, Monicas; incluye carteles de campamento y canal de WhatsApp.",
+      "criterio_propuesto": "Importar avisos desde un documento Word cargado por el usuario y ajustar el contenido al espacio disponible.",
+      "criterio_validado": {
+        "origen": "Word_docx",
+        "ajuste": "mostrar_previsualizacion_y_alerta_de_espacio"
+      },
+      "preguntas_para_usuario": [],
+      "fuentes_candidatas": [
+        "https://www.parroquiatorrelodones.com/",
+        "https://www.parroquiatorrelodones.com/category/avisos/"
+      ]
+    },
+    {
+      "id": "habla_el_papa",
+      "titulo_visible": "HABLA EL PAPA",
+      "tipo": "extracto",
+      "contenido_detectado": "Extracto de una catequesis/noticia del Papa sobre liturgia.",
+      "criterio_propuesto": "Buscar en Vatican News y Vatican.va, proponer intervenciones recientes del Papa y permitir seleccionar una para extraer titulo, imagen y fragmento/resumen.",
+      "criterio_validado": {
+        "fuentes": [
+          "Vatican News",
+          "Vatican.va"
+        ],
+        "seleccion": "usuario_revisa_y_confirma"
+      },
+      "preguntas_para_usuario": [],
+      "fuentes_candidatas": [
+        "https://www.vaticannews.va/es/papa.html",
+        "https://www.vatican.va/content/leo-xiv/es.html"
+      ]
+    },
+    {
+      "id": "servicio_informativo",
+      "titulo_visible": "Nuestro Servicio Informativo",
+      "tipo": "lista_de_enlaces",
+      "contenido_detectado": "Lista de temas tratados para el servicio de la semana anterior.",
+      "criterio_propuesto": "Cargar la seleccion manual del Servicio Informativo desde un documento Word y ajustarla al espacio disponible.",
+      "criterio_validado": {
+        "origen": "Word_docx",
+        "seleccion": "manual",
+        "ajuste": "mostrar_previsualizacion_y_alerta_de_espacio"
+      },
+      "preguntas_para_usuario": [],
+      "fuentes_candidatas": [
+        "https://www.parroquiatorrelodones.com/feed/",
+        "https://www.parroquiatorrelodones.com/"
+      ]
+    },
+    {
+      "id": "imagenes_y_carteles",
+      "titulo_visible": "Imagenes de apoyo",
+      "tipo": "multimedia",
+      "contenido_detectado": "Foto de la parroquia, imagen de cruz/Corpus, santos, Papa, campamento, WhatsApp.",
+      "criterio_propuesto": "Usar primero imagenes oficiales/parroquiales; para santos, ofrecer imagenes candidatas asociadas a los santos de la semana elegidos por el usuario.",
+      "preguntas_para_usuario": [
+        "¿Hay una carpeta de imagenes oficiales que deba usar la app?",
+        "¿Puede la app descargar imagenes de la web parroquial/Vatican News?",
+        "¿Quieres que se generen imagenes nuevas cuando no haya cartel?"
+      ],
+      "fuentes_candidatas": [
+        "Web parroquial",
+        "Vatican Media / Vatican News",
+        "Carpeta local de recursos"
+      ]
+    }
+  ],
+  "automatizacion_sugerida": {
+    "acceso_app": {
+      "usuario": "pasuntorre",
+      "contrasena": "pasuntorre26..",
+      "tipo": "autenticacion_basica_local"
+    },
+    "plantilla_pdf": {
+      "objetivo_actual": "replicar_diseno_visual_exacto_del_folleto_actual",
+      "referencia": "1233-Assumpta-07-06-2026.pdf",
+      "estrategia": "usar_pdf_como_fondo_visual_y_rellenar_solo_huecos_variables",
+      "bloques_congelados": [
+        "datos_fijos_parroquia",
+        "avisos_fijos_vida_parroquial",
+        "pie_central_whatsapp",
+        "imagen_superior_habla_el_papa",
+        "servicio_informativo_pie"
+      ],
+      "huecos_variables": [
+        "carta_parroco",
+        "catecismo_compendio",
+        "liturgia_evangelio",
+        "anuncio_central",
+        "habla_el_papa",
+        "santos_portada",
+        "numero_y_fecha"
+      ]
+    },
+    "flujo": [
+      "Elegir fecha del proximo domingo y numero de Assumpta.",
+      "Cargar criterios guardados y estado semanal.",
+      "Cargar Word de carta, datos fijos, vida parroquial y servicio informativo cuando proceda.",
+      "Consultar fuentes: liturgia vaticana, Papa, santoral y compendio local.",
+      "Generar borrador por secciones.",
+      "Mostrar pantalla de revision humana con edicion por bloque.",
+      "Exportar PDF listo para imprimir como triptico.",
+      "Actualizar estado: numero publicado y siguiente pregunta del Compendio."
+    ],
+    "control_humano_recomendado": [
+      "Carta del parroco",
+      "Vida parroquial",
+      "Habla el Papa",
+      "Imagenes y carteles",
+      "Ajuste final para que el texto quepa"
+    ]
+  },
+  "mejoras_propuestas": [
+    "Crear una plantilla visual fija del triptico para exportar a PDF, no solo HTML/Markdown.",
+    "Separar datos fijos, reglas recurrentes y contenido semanal.",
+    "Añadir validacion de espacio: alerta si una seccion excede caracteres aproximados.",
+    "Guardar historial de cada numero generado.",
+    "Permitir fuentes manuales de respaldo si falla una web.",
+    "Añadir boton de previsualizacion por panel del triptico.",
+    "Usar una cola de revision: borrador, revisado, listo para imprimir."
+  ]
+}

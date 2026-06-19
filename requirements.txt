@@ -1,8 +1,4 @@
-flask
-requests
-beautifulsoup4
-feedparser
 python-docx
 pypdf
-gunicorn
-
+reportlab
+flask

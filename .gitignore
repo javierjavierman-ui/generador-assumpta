@@ -1,5 +1,12 @@
-.env
-output/
 __pycache__/
 *.pyc
 .DS_Store
+output/
+static/previews/
+assets/uploads/
+assets/liturgy/
+assets/saints/
+assets/liturgy_sources/
+active_tunnel_url.txt
+.env
+.vercel/
