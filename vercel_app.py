@@ -72,9 +72,9 @@ def index():
         return _auth_required()
     if request.method == "GET":
         handler = _CaptureHandler("GET", request.full_path)
-        query = parse_qs(request.query_string.decode("utf-8"))
-        simulation = query.get("sim", [""])[0] == "1233"
-        handler.render_form(data=handler.simulation_defaults() if simulation else None, simulation=simulation)
+        query = parse_qs(request.query_string.decode("utf-8", errors="ignore"))
+        fecha = query.get("fecha", [""])[0]
+        handler.render_form(data={"fecha": fecha} if fecha else None)
         return _response_from_handler(handler)
 
     import assumpta_core
@@ -95,10 +95,9 @@ def index():
             "CONTENT_LENGTH": request.headers.get("Content-Length", "0"),
     })
     handler = _CaptureHandler("POST", request.full_path)
-    simulation = local_app.read_field(form, "simulation") == "1233"
     action = local_app.read_field(form, "action", "proof")
     proof = action != "production"
-    result, data, next_question = handler.build_result_from_form(form, simulation=simulation, proof=proof)
+    result, data, next_question = handler.build_result_from_form(form, proof=proof)
     if result.get("pdf") and os.path.exists(result["pdf"]):
         return send_file(
             result["pdf"],
@@ -106,7 +105,7 @@ def index():
             as_attachment=False,
             download_name=os.path.basename(result["pdf"]),
         )
-    handler.render_form(result=result, data=data, next_question=next_question, simulation=simulation)
+    handler.render_form(result=result, data=data, next_question=next_question)
     return _response_from_handler(handler)
 
 

@@ -110,6 +110,7 @@ def long_spanish_date(value: str) -> str:
 def saints_for_week(start_iso: str) -> list[dict]:
     start = parse_date(start_iso)
     result = []
+    # Periodo semanal del boletin: desde el domingo indicado hasta el sabado siguiente.
     for offset in range(7):
         day = start + timedelta(days=offset)
         key = day.strftime("%m-%d")
@@ -409,6 +410,15 @@ def _draw_cover(c: canvas.Canvas, x: float, y: float, w: float, h: float, fill=c
     c.setStrokeColor(colors.black)
 
 
+def _draw_empty_box(c: canvas.Canvas, x: float, y: float, w: float, h: float) -> None:
+    _draw_cover(c, x, y, w, h, colors.white)
+    c.setStrokeColor(colors.HexColor("#b7b7b7"))
+    c.setLineWidth(0.35)
+    c.rect(x, y, w, h, stroke=1, fill=0)
+    c.setStrokeColor(colors.black)
+    c.setLineWidth(1)
+
+
 def _wrap_lines(text: str, width: float, font_name: str, font_size: int) -> list[str]:
     avg = max(10, int(width / max(stringWidth("n", font_name, font_size), 1)))
     lines = []
@@ -471,18 +481,17 @@ def _draw_image_or_placeholder(c: canvas.Canvas, path: str, x: float, y: float, 
             return
         except Exception:
             pass
-    _draw_cover(c, x, y, w, h, colors.HexColor("#eeeeee"))
-    c.setStrokeColor(colors.HexColor("#bdbdbd"))
-    c.rect(x, y, w, h, stroke=1, fill=0)
-    c.setFillColor(colors.HexColor("#555555"))
-    c.setFont("Helvetica-Bold", 9)
-    c.drawCentredString(x + w / 2, y + h / 2, label[:26])
-    c.setFillColor(colors.black)
+    _draw_empty_box(c, x, y, w, h)
+    if label:
+        c.setFillColor(colors.HexColor("#777777"))
+        c.setFont("Helvetica", 8)
+        c.drawCentredString(x + w / 2, y + h / 2, label[:26])
+        c.setFillColor(colors.black)
 
 
 def _draw_announcement(c: canvas.Canvas, data: dict, warnings: list[str]) -> None:
     _draw_cover(c, 331, 114, 184, 270)
-    text = data.get("anuncio", "Anuncio pendiente.").strip()
+    text = data.get("anuncio", "").strip()
     image_path = data.get("anuncio_imagen_path", "").strip()
     has_image = bool(image_path and os.path.exists(image_path))
     content_x, content_y, content_w, content_h = 342, 132, 162, 226
@@ -496,9 +505,12 @@ def _draw_announcement(c: canvas.Canvas, data: dict, warnings: list[str]) -> Non
     elif has_image:
         _draw_image_or_placeholder(c, image_path, content_x, content_y + 6, content_w, content_h - 12, "Imagen del anuncio")
         ok = True
-    else:
+    elif text:
         text_size = _fit_font_size(text, 16, 8, 600)
         ok = _draw_wrapped(c, text, content_x, 150, content_w, 190, text_size, "Helvetica-Bold", align="center", leading_factor=1.18)
+    else:
+        _draw_empty_box(c, content_x, content_y, content_w, content_h)
+        ok = True
 
     if not ok:
         warnings.append("Anuncio central: el contenido es demasiado largo para esta zona.")
@@ -555,8 +567,8 @@ def _draw_page_1(c: canvas.Canvas, data: dict, page_w: float, page_h: float, war
         c.setFont("Helvetica", 6.5)
         c.drawCentredString(slot[0] + slot[2] / 2, 60, name[:24])
     if not names:
-        c.setFont("Helvetica", 8)
-        c.drawCentredString(740, 105, "Santos pendientes de elegir")
+        for slot in slots:
+            _draw_empty_box(c, *slot)
 
 
 def _draw_page_2(c: canvas.Canvas, data: dict, page_w: float, page_h: float, warnings: list[str]) -> None:
@@ -565,7 +577,7 @@ def _draw_page_2(c: canvas.Canvas, data: dict, page_w: float, page_h: float, war
     # Liturgia completa: imagen, titulo, lecturas, secuencia/aleluya y Evangelio.
     _draw_cover(c, 18, 23, 259, 551)
     lit_image = data.get("liturgia_imagen_path") or download_commons_image(data.get("liturgia_imagen_query") or data.get("celebracion") or data.get("evangelio_ref") or "Gospel", "liturgy")
-    _draw_image_or_placeholder(c, lit_image, 18, 446, 259, 110, "Imagen del Evangelio")
+    _draw_image_or_placeholder(c, lit_image, 18, 446, 259, 110, "")
     c.setFillColor(colors.HexColor("#666666"))
     c.setFont("Helvetica-Bold", 14)
     c.drawCentredString(147, 431, data.get("celebracion", "Domingo").replace(" - ", "\n")[:42])
@@ -574,13 +586,20 @@ def _draw_page_2(c: canvas.Canvas, data: dict, page_w: float, page_h: float, war
     c.setFillColor(colors.black)
 
     secuencia = data.get("secuencia", "").strip()
+    lleva_secuencia = data.get("lleva_secuencia") == "yes"
     aleluya = data.get("aleluya", "").strip()
     evangelio_titulo = data.get("evangelio_titulo", "").strip()
+    pre_y = 268
+    pre_h = 109
+    ok_sequence = True
+    if lleva_secuencia and not secuencia:
+        _draw_empty_box(c, 23, 344, 248, 33)
+        pre_h = 70
     lit_pre = "\n\n".join(part for part in [secuencia, aleluya, evangelio_titulo] if part)
-    ok_pre = _draw_wrapped(c, lit_pre, 23, 268, 248, 109, 7, "Helvetica", align="center", leading_factor=1.12)
+    ok_pre = _draw_wrapped(c, lit_pre, 23, pre_y, 248, pre_h, 7, "Helvetica", align="center", leading_factor=1.12)
     ev_size = _fit_font_size(data["evangelio"], 8, 6, 2500)
     ok_ev = _draw_wrapped(c, data["evangelio"], 23, 50, 248, 210, ev_size, "Helvetica", leading_factor=1.13)
-    if not (ok_pre and ok_ev):
+    if not (ok_sequence and ok_pre and ok_ev):
         warnings.append("Evangelio/liturgia: el texto es demasiado largo para esta zona.")
         _draw_overflow_warning(c, 24, 34, 245, "Liturgia demasiado larga")
 
@@ -589,12 +608,15 @@ def _draw_page_2(c: canvas.Canvas, data: dict, page_w: float, page_h: float, war
 
     # Habla el Papa: conservar marco y cabecera; tapar solo el texto central.
     _draw_cover(c, 592, 183, 218, 204)
-    papa = data.get("habla_papa", "Texto pendiente de cargar desde Word.")
-    papa_size = _fit_font_size(papa, 9, 6, 1150)
-    ok = _draw_wrapped(c, papa, 596, 195, 210, 184, papa_size, "Helvetica", italic=True, leading_factor=1.15)
-    if not ok:
-        warnings.append("Habla el Papa: el texto es demasiado largo para esta zona.")
-        _draw_overflow_warning(c, 596, 187, 210, "Habla el Papa demasiado largo")
+    papa = data.get("habla_papa", "").strip()
+    if papa:
+        papa_size = _fit_font_size(papa, 9, 6, 1150)
+        ok = _draw_wrapped(c, papa, 596, 195, 210, 184, papa_size, "Helvetica", italic=True, leading_factor=1.15)
+        if not ok:
+            warnings.append("Habla el Papa: el texto es demasiado largo para esta zona.")
+            _draw_overflow_warning(c, 596, 187, 210, "Habla el Papa demasiado largo")
+    else:
+        _draw_empty_box(c, 596, 195, 210, 184)
 
 
 def _draw_proof_mark(c: canvas.Canvas, page_w: float, page_h: float) -> None:

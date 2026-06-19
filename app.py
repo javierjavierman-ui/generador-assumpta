@@ -36,18 +36,6 @@ DEFAULT_COMPENDIO = os.environ.get("ASSUMPTA_COMPENDIO", os.path.join(BASE_DIR, 
 AUTH_USERNAME = "pasuntorre"
 AUTH_PASSWORD = "pasuntorre26.."
 FIXED_ALELUYA = "R. Aleluya, aleluya, aleluya. Yo soy el pan vivo que ha bajado del cielo -dice el Señor-; el que coma de este pan vivirá para siempre. R."
-SIMULATION_1233 = {
-    "sim": "1233",
-    "fecha": "2026-06-07",
-    "numero": 1233,
-    "compendio_start": 325,
-    "celebracion": "Corpus Christi",
-    "lecturas": "Dt 8, 2-3. 14b-16a     1Cor 10, 16-17",
-    "evangelio_ref": "Juan 6, 51-58",
-    "liturgia_imagen_query": "Eucharist chalice bread",
-}
-
-
 def esc(value: object) -> str:
     return html.escape(str(value or ""))
 
@@ -129,8 +117,8 @@ class Handler(BaseHTTPRequestHandler):
         if parsed.path.startswith("/output/"):
             return self.serve_output()
         query = parse_qs(parsed.query)
-        simulation = query.get("sim", [""])[0] == "1233"
-        return self.render_form(data=self.simulation_defaults() if simulation else None, simulation=simulation)
+        fecha = query.get("fecha", [""])[0]
+        return self.render_form(data={"fecha": fecha} if fecha else None)
 
     def do_POST(self):
         if not self.require_auth():
@@ -139,46 +127,21 @@ class Handler(BaseHTTPRequestHandler):
             "REQUEST_METHOD": "POST",
             "CONTENT_TYPE": self.headers.get("Content-Type", ""),
         })
-        simulation = read_field(form, "simulation") == "1233"
         action = read_field(form, "action", "proof")
         proof = action != "production"
-        result, data, next_question = self.build_result_from_form(form, simulation=simulation, proof=proof)
-        if action == "production" and read_field(form, "advance_state") == "yes" and not simulation:
+        result, data, next_question = self.build_result_from_form(form, proof=proof)
+        if action == "production" and read_field(form, "advance_state") == "yes":
             save_state({
                 "last_assumpta_number": data["numero"],
                 "last_assumpta_date": data["fecha"],
                 "next_compendio_question": next_question,
             })
-        self.render_form(result=result, data=data, next_question=next_question, simulation=simulation)
+        self.render_form(result=result, data=data, next_question=next_question)
 
-    def simulation_defaults(self) -> dict:
-        return {
-            "simulation": "1233",
-            "fecha": SIMULATION_1233["fecha"],
-            "fecha_larga": long_spanish_date(SIMULATION_1233["fecha"]).upper(),
-            "numero": SIMULATION_1233["numero"],
-            "compendio_start": SIMULATION_1233["compendio_start"],
-            "celebracion": SIMULATION_1233["celebracion"],
-            "lecturas": SIMULATION_1233["lecturas"],
-            "evangelio_ref": SIMULATION_1233["evangelio_ref"],
-            "evangelio_titulo": gospel_title_from_ref(SIMULATION_1233["evangelio_ref"]),
-            "liturgia_imagen_query": SIMULATION_1233["liturgia_imagen_query"],
-            "liturgia_imagen_path": "",
-            "lleva_secuencia": "",
-            "carta": "",
-            "secuencia": "",
-            "evangelio": "",
-            "anuncio": "",
-            "anuncio_imagen_path": "",
-            "habla_papa": "",
-            "santos": ["Bernabe", "Antonio de Padua"],
-        }
-
-    def build_result_from_form(self, form: cgi.FieldStorage, simulation: bool = False, proof: bool = True) -> tuple[dict, dict, int]:
-        defaults = self.simulation_defaults() if simulation else {}
-        fecha = read_field(form, "fecha", defaults.get("fecha", "2026-06-14"))
-        numero = int(read_field(form, "numero", str(defaults.get("numero", next_assumpta_number()))))
-        compendio_default = defaults.get("compendio_start", load_state().get("next_compendio_question", 330))
+    def build_result_from_form(self, form: cgi.FieldStorage, proof: bool = True) -> tuple[dict, dict, int]:
+        fecha = read_field(form, "fecha", "2026-06-14")
+        numero = int(read_field(form, "numero", str(next_assumpta_number())))
+        compendio_default = load_state().get("next_compendio_question", 330)
         compendio_start = int(read_field(form, "compendio_start", str(compendio_default)))
         compendio, next_question = extract_compendio_questions(DEFAULT_COMPENDIO, compendio_start)
         gospel = fetch_vatican_gospel(fecha)
@@ -204,7 +167,6 @@ class Handler(BaseHTTPRequestHandler):
             "numero": numero,
             "carta": carta or "Pegue o cargue la carta del parroco.",
             "compendio": compendio,
-            "simulation": "1233" if simulation else "",
             "celebracion": celebration,
             "lecturas": read_field(form, "lecturas") or gospel.reading_ref,
             "lleva_secuencia": "yes" if lleva_secuencia else "",
@@ -217,9 +179,9 @@ class Handler(BaseHTTPRequestHandler):
             "evangelio_warning": gospel.warning,
             "liturgia_imagen_query": image_query,
             "liturgia_imagen_path": liturgia_imagen_path,
-            "anuncio": anuncio or "Cargue el Word del anuncio semanal.",
+            "anuncio": anuncio,
             "anuncio_imagen_path": anuncio_imagen_path,
-            "habla_papa": habla_papa or "Cargue el Word de Habla el Papa.",
+            "habla_papa": habla_papa,
             "santos": selected_saints,
             "proof": proof,
         }
@@ -263,10 +225,9 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(data)
 
-    def render_form(self, result: dict | None = None, data: dict | None = None, next_question: int | None = None, simulation: bool = False):
+    def render_form(self, result: dict | None = None, data: dict | None = None, next_question: int | None = None):
         state = load_state()
-        defaults = self.simulation_defaults() if simulation and not data else {}
-        view_data = data or defaults
+        view_data = data or {}
         fecha = view_data.get("fecha", "2026-06-14")
         saints = saints_for_week(fecha)
         saint_checks = "\n".join(
@@ -279,13 +240,7 @@ class Handler(BaseHTTPRequestHandler):
                 f"name='saints' value='{esc(selected)}'",
                 f"name='saints' value='{esc(selected)}' checked",
             )
-        sim_banner = ""
-        sim_hidden = ""
-        state_control = '<label class="inline"><input type="checkbox" name="advance_state" value="yes"> Actualizar estado si el PDF queda bien</label>'
-        if simulation:
-            sim_banner = "<section class='notice'><strong>Simulacion boletin 1233.</strong> Esta prueba no actualiza el estado semanal real.</section>"
-            sim_hidden = "<input type='hidden' name='simulation' value='1233'>"
-            state_control = "<p class='muted'>Modo simulacion: el estado semanal no se actualizara.</p>"
+        state_control = '<label class="inline"><input type="checkbox" name="advance_state" value="yes"> Confirmo que el PDF de producción está revisado y quiero guardar este número como último boletín preparado</label>'
         share_html = self.render_share_box()
         preview_html = ""
         if result:
@@ -296,7 +251,7 @@ class Handler(BaseHTTPRequestHandler):
             first_preview = (result.get("previews") or [""])[0]
             preview_link = f"<a class='button-link secondary' href='{esc(first_preview)}?v={cache_key}' target='_blank'>Abrir preview en ventana nueva</a>" if first_preview else ""
             warning_block = f"<ul class='warnings'>{warnings_html}</ul>" if warnings_html else "<p class='ok'>Todo parece caber en la plantilla.</p>"
-            kind = "prueba con marca" if result.get("pdf", "").endswith("-prueba.pdf") else "produccion limpia"
+            kind = "vista previa con marca" if result.get("pdf", "").endswith("-prueba.pdf") else "produccion limpia"
             preview_html = f"""
       <section class="preview" id="preview">
         <h2>8. Previsualizacion</h2>
@@ -324,19 +279,13 @@ class Handler(BaseHTTPRequestHandler):
       </div>
       <p class="badge">Plantilla visual exacta</p>
     </header>
-    <nav class="modebar">
-      <a href="/">Modo normal</a>
-      <a href="/?sim=1233">Simular boletin 1233</a>
-    </nav>
-    {sim_banner}
     {share_html}
 
     <form method="post" enctype="multipart/form-data">
-      {sim_hidden}
       <section>
         <h2>1. Fecha</h2>
         <div class="grid">
-          <label>Domingo del folleto <input type="date" name="fecha" value="{esc(fecha)}"></label>
+          <label>Domingo del folleto <input type="date" name="fecha" value="{esc(fecha)}" onchange="window.location='/?fecha=' + this.value"></label>
           <label>Numero Assumpta <input type="number" name="numero" value="{esc(view_data.get('numero', next_assumpta_number()))}"></label>
           <label>Pregunta inicial Compendio <input type="number" name="compendio_start" value="{esc(view_data.get('compendio_start', state.get('next_compendio_question', 330)))}"></label>
         </div>
@@ -357,7 +306,7 @@ class Handler(BaseHTTPRequestHandler):
       <section>
         <h2>4. Evangelio y liturgia</h2>
         <div class="grid">
-          <label>Titulo liturgico <input name="celebracion" value="{esc(view_data.get('celebracion', ''))}" placeholder="Se rellenara desde Vatican News"></label>
+          <label>Titulo liturgico <input name="celebracion" value="{esc(view_data.get('celebracion', ''))}" placeholder="Se rellenara desde Oracion y Liturgia"></label>
           <label>Lecturas <input name="lecturas" value="{esc(view_data.get('lecturas', ''))}" placeholder="Ej.: Hch..., Sal..., Jn..."></label>
           <label>Referencia Evangelio <input name="evangelio_ref" value="{esc(view_data.get('evangelio_ref', ''))}" placeholder="Se rellenara automaticamente"></label>
         </div>
@@ -390,13 +339,13 @@ class Handler(BaseHTTPRequestHandler):
 
       <section>
         <h2>7. Santos</h2>
-        <p class="muted">Elige uno o dos. La app descargara las imagenes automaticamente al previsualizar.</p>
+        <p class="muted">Elige uno o dos santos de la semana correspondiente al domingo indicado en el apartado 1. La app generara sus imagenes automaticamente al crear la vista previa.</p>
         <div class="checks">{saint_checks}</div>
       </section>
 
       <div class="actions">
-        <button type="submit" name="action" value="proof">Imprimir prueba</button>
-        <button type="submit" name="action" value="production">Generar produccion</button>
+        <button type="submit" name="action" value="proof" formtarget="_blank">Generar vista previa</button>
+        <button type="submit" name="action" value="production" formtarget="_blank">Generar produccion</button>
         {state_control}
       </div>
     </form>
