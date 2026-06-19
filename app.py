@@ -3,6 +3,7 @@ from __future__ import annotations
 import base64
 import html
 import os
+import time
 import uuid
 import warnings
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -290,7 +291,7 @@ class Handler(BaseHTTPRequestHandler):
         if result:
             pdf_rel = os.path.relpath(result["pdf"], BASE_DIR)
             warnings_html = "".join(f"<li>{esc(w)}</li>" for w in result.get("warnings", []))
-            cache_key = str(int(os.path.getmtime(result["pdf"])))
+            cache_key = str(int(os.path.getmtime(result["pdf"]))) if os.path.exists(result["pdf"]) else str(int(time.time()))
             previews = "".join(f"<img src='{esc(path)}?v={cache_key}' alt='Previsualizacion del triptico'>" for path in result.get("previews", []))
             first_preview = (result.get("previews") or [""])[0]
             preview_link = f"<a class='button-link secondary' href='{esc(first_preview)}?v={cache_key}' target='_blank'>Abrir preview en ventana nueva</a>" if first_preview else ""
