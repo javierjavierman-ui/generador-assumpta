@@ -292,7 +292,7 @@ class Handler(BaseHTTPRequestHandler):
             warnings_html = "".join(f"<li>{esc(w)}</li>" for w in result.get("warnings", []))
             cache_key = str(int(os.path.getmtime(result["pdf"])))
             previews = "".join(f"<img src='{esc(path)}?v={cache_key}' alt='Previsualizacion del triptico'>" for path in result.get("previews", []))
-            first_preview = result.get("previews", [""])[0]
+            first_preview = (result.get("previews") or [""])[0]
             preview_link = f"<a class='button-link secondary' href='{esc(first_preview)}?v={cache_key}' target='_blank'>Abrir preview en ventana nueva</a>" if first_preview else ""
             warning_block = f"<ul class='warnings'>{warnings_html}</ul>" if warnings_html else "<p class='ok'>Todo parece caber en la plantilla.</p>"
             kind = "prueba con marca" if result.get("pdf", "").endswith("-prueba.pdf") else "produccion limpia"
